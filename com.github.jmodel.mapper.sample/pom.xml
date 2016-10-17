@@ -36,7 +36,7 @@
 								<source>src/main/java</source>
 								<source>src-gen/main/java</source>
 							</sources>
-						</configuration>
+						</configuration> 
 					</execution>
 				</executions>
 			</plugin>
