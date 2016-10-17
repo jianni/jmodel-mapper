@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <relativePath>../com.github.jmodel.mapper.plugin.parent/pom.xml</relativePath>
+    <groupId>com.github.jmodel</groupId>
+    <artifactId>com.github.jmodel.mapper.plugin.parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>com.github.jmodel.mapper.plugin.sdk</artifactId>
+  <packaging>eclipse-feature</packaging>
+
+  <name>jmodel-mapper Mapping Language Feature</name>
+</project>
