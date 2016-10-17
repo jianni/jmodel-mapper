@@ -1,0 +1,94 @@
+grammar com.github.jmodel.mapper.plugin.MappingLanguage with org.eclipse.xtext.xbase.Xbase
+
+generate mappingLanguage "http://www.github.com/jianni/jmodel-mapper/MappingLanguage"
+import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
+
+Mapping:
+	'mapping' name=QualifiedName ('extends' superType=[Mapping])? '{' from=From to=To body=Body '}';
+
+From:
+	'from:' name=Format;
+
+To:
+	'to:' name=Format;
+
+Body returns xbase::XBlockExpression:
+	{Body}
+	mappingBlocks+=MappingBlock+;
+
+MappingBlock returns xbase::XBlockExpression:
+	{MappingBlock}
+	(isFollowRootPath=IsFollowRootPath)? sourceModelPath=ModelPathExpr '=>' targetModelPath=ModelPathExpr (isAppend='+')?
+	'{' (filter=Filter)?
+	fieldMappings+=FieldMapping* mappingBlocks+=MappingBlock* '};';
+
+IsFollowRootPath:
+	'#'+;
+
+ModelPathExpr:
+	('.' | ValidID) ('[]')? (=> '.' ValidID ('[]')?)*;
+
+Filter:
+	{Filter}
+	':' expression=XOrExpression;
+
+FieldMapping returns xbase::XBlockExpression:
+	{FieldMapping}
+	expression=(SingleTargetFieldMapping | IfTargetFieldsMapping);
+
+SingleTargetFieldMapping returns xbase::XExpression:
+	{SingleTargetFieldMapping}
+	sourceFieldPath=SourceFieldPath '=>' targetFieldName=TargetFieldPath ';';
+
+TargetFieldPath returns xbase::XExpression:
+	{TargetFieldPath}
+	expression=XFeatureCall;
+
+SourceFieldPath returns xbase::XExpression:
+	{SourceFieldPath}
+	expression=(SourceFieldPathXLiteral | SourceFieldPathXParenthesizedExpression | SourceFieldPathXFeatureCall);
+
+SourceFieldPathXLiteral returns xbase::XExpression:
+	{SourceFieldPathXLiteral}
+	content=XLiteral;
+
+SourceFieldPathXFeatureCall returns xbase::XExpression:
+	{SourceFieldPathXFeatureCall}
+	(isFollowRootPath=IsFollowRootPath)? content=QualifiedName;
+
+SourceFieldPathXParenthesizedExpression returns xbase::XExpression:
+	{SourceFieldPathXParenthesizedExpression}
+	content=XParenthesizedExpression;
+
+XPrimaryExpression returns xbase::XExpression:
+	XBlockExpression |
+	XFeatureCall |
+	XLiteral |
+	XIfExpression |
+	XParenthesizedExpression |
+	SourceFieldPathXFeatureCall;
+
+IfTargetFieldsMapping returns xbase::XExpression:
+	{IfTargetFieldsMapping}
+	sourceFieldPathIf=SourceFieldPathIf;
+
+SourceFieldPathIf returns xbase::XIfExpression:
+	{SourceFieldPathIf}
+	"IF" if=XOrExpression
+	then=SourceFieldPathSetting
+	(else=SourceFieldPathElseIf | "ELSE" else=SourceFieldPathSetting)?
+	"ENDIF";
+
+SourceFieldPathElseIf returns xbase::XIfExpression:
+	{SourceFieldPathElseIf}
+	"ELSEIF" if=XOrExpression
+	then=SourceFieldPathSetting
+	(else=SourceFieldPathElseIf | "ELSE" else=SourceFieldPathSetting)?;
+
+SourceFieldPathSetting returns xbase::XBlockExpression:
+	{SourceFieldPathSetting}
+	set+=SingleTargetFieldMapping+;
+
+enum Format:
+	XML='XML' | JSON='JSON';
+
