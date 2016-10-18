@@ -14,8 +14,12 @@ public class ModelHelper {
 
 		String parentModelPath = parentModel.getModelPath();
 		if (subModel instanceof Entity) {
-			subModel.setModelPath(parentModelPath.substring(0, parentModelPath.lastIndexOf("[")) + "["
-					+ (parentModel.getSubModels().size() - 1) + "]");
+			if (parentModel instanceof Array) {
+				subModel.setModelPath(parentModelPath.substring(0, parentModelPath.lastIndexOf("[")) + "["
+						+ (parentModel.getSubModels().size() - 1) + "]");
+			} else {
+				subModel.setModelPath(parentModelPath + "." + subModel.getName());
+			}
 			for (Field field : ((Entity) subModel).getFields()) {
 				subModel.getFieldPathMap().put(subModel.getModelPath() + "." + field.getName(), field);
 			}
