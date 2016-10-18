@@ -7,7 +7,6 @@ import java.util.function.Predicate;
 public class ModelHelper {
 
 	public static void buildRelationForSubModel(Model parentModel, Model subModel) {
-		// parentModel.getSubModels().add(subModel);
 		subModel.setParentModel(parentModel);
 		subModel.setFieldPathMap(parentModel.getFieldPathMap());
 		subModel.setModelPathMap(parentModel.getModelPathMap());
