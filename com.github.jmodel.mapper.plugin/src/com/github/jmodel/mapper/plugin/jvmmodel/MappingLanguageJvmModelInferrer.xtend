@@ -1,11 +1,12 @@
 package com.github.jmodel.mapper.plugin.jvmmodel
 
+import com.github.jmodel.mapper.api.Model
+import com.github.jmodel.mapper.plugin.mappingLanguage.Block
 import com.github.jmodel.mapper.plugin.mappingLanguage.Filter
 import com.github.jmodel.mapper.plugin.mappingLanguage.Mapping
-import com.github.jmodel.mapper.plugin.mappingLanguage.MappingBlock
+import com.github.jmodel.mapper.plugin.mappingLanguage.SingleSourceFieldPath
 import com.github.jmodel.mapper.plugin.mappingLanguage.SourceFieldPath
 import com.github.jmodel.mapper.plugin.mappingLanguage.SourceFieldPathIf
-import com.github.jmodel.mapper.plugin.mappingLanguage.SourceFieldPathXFeatureCall
 import com.github.jmodel.mapper.plugin.mappingLanguage.TargetFieldPath
 import com.google.inject.Inject
 import org.eclipse.xtext.common.types.JvmDeclaredType
@@ -15,7 +16,6 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.XMemberFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-//import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor.IPostIndexingInitializing
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
 /**
@@ -32,7 +32,6 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 	@Inject extension JvmTypesBuilder
 
 //	@Inject com.github.jmodel.mapper.plugin.jvmmodel.MappingXbaseCompiler compiler
-
 	/**
 	 * The dispatch method {@code infer} is called for each instance of the
 	 * given element's type that is contained in a resource.
@@ -95,8 +94,8 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 			]
 
 			members += element.toMethod("execute", typeRef(void)) [
-				parameters += element.toParameter("mySourceModel", typeRef(com.github.jmodel.mapper.api.Model))
-				parameters += element.toParameter("myTargetModel", typeRef(com.github.jmodel.mapper.api.Model))
+				parameters += element.toParameter("mySourceModel", typeRef(Model))
+				parameters += element.toParameter("myTargetModel", typeRef(Model))
 
 				annotations += annotationRef("java.lang.Override");
 
@@ -128,72 +127,70 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 
 	def genOriginalPaths(
 		Mapping element) '''
+			
+			«FOR block : element.eAllContents.toIterable.filter(typeof(Block))»
+			instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(block, true)»._");
+			instance.getRawTargetFieldPaths().add("«Util.getFullModelPath(block, false)»._");
+			«ENDFOR»
 		
-		«FOR mappingBlock : element.eAllContents.toIterable.filter(typeof(MappingBlock))»
-			instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(mappingBlock, true)»._");
-			instance.getRawTargetFieldPaths().add("«Util.getFullModelPath(mappingBlock, false)»._");
-		«ENDFOR»
-	
-		«FOR filter : element.eAllContents.toIterable.filter(typeof(Filter))»
-			«FOR memberFeatureCall:element.eAllContents.toIterable.filter(typeof(XMemberFeatureCall))»
-				«IF Util.isTopMemberFeatureCall(memberFeatureCall)»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(memberFeatureCall, true)».«Util.getXMemberFeatureCallPath(memberFeatureCall.memberCallTarget as XAbstractFeatureCall, memberFeatureCall.concreteSyntaxFeatureName)»");
-				«ENDIF»	
+			«FOR filter : element.eAllContents.toIterable.filter(typeof(Filter))»
+				«FOR memberFeatureCall:element.eAllContents.toIterable.filter(typeof(XMemberFeatureCall))»
+					«IF Util.isTopMemberFeatureCall(memberFeatureCall)»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(memberFeatureCall, true)».«Util.getXMemberFeatureCallPath(memberFeatureCall.memberCallTarget as XAbstractFeatureCall, memberFeatureCall.concreteSyntaxFeatureName)»");
+					«ENDIF»	
+				«ENDFOR»
+				«FOR featureCall:element.eAllContents.toIterable.filter(typeof(XFeatureCall))»
+					«IF Util.isNotInMemberFeatureCall(featureCall)»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(featureCall, true)».«featureCall»");
+					«ENDIF»	
+				«ENDFOR»
 			«ENDFOR»
-			«FOR featureCall:element.eAllContents.toIterable.filter(typeof(XFeatureCall))»
-				«IF Util.isNotInMemberFeatureCall(featureCall)»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(featureCall, true)».«featureCall»");
-				«ENDIF»	
+			
+			«FOR sourceFieldPath : element.eAllContents.toIterable.filter(typeof(SourceFieldPath))»
+				«FOR field:sourceFieldPath.eAllContents.toIterable.filter(typeof(SingleSourceFieldPath))»
+					«IF field.absolutePath!=null»
+						instance.getRawSourceFieldPaths().add("«Util.getSourceModelPathByPath(field)».«field.content»");
+					«ELSE»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(field, true)».«field.content»");
+					«ENDIF»		
+				«ENDFOR»
+				«FOR memberFeatureCall:sourceFieldPath.eAllContents.toIterable.filter(typeof(XMemberFeatureCall))»
+					«IF Util.isTopMemberFeatureCall(memberFeatureCall)»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(memberFeatureCall, true)».«Util.getXMemberFeatureCallPath(memberFeatureCall.memberCallTarget as XAbstractFeatureCall, memberFeatureCall.concreteSyntaxFeatureName)»");
+					«ENDIF»	
+				«ENDFOR»
+				«FOR featureCall:sourceFieldPath.eAllContents.toIterable.filter(typeof(XFeatureCall))»
+					«IF Util.isNotInMemberFeatureCall(featureCall)»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(featureCall, true)».«featureCall»");
+					«ENDIF»	
+				«ENDFOR»
 			«ENDFOR»
-		«ENDFOR»
-		
-		«FOR sourceFieldPath : element.eAllContents.toIterable.filter(typeof(SourceFieldPath))»
-			«FOR field:sourceFieldPath.eAllContents.toIterable.filter(typeof(SourceFieldPathXFeatureCall))»
-				«IF field.isFollowRootPath!=null»
-					instance.getRawSourceFieldPaths().add("«Util.getSourceModelPathByPath(field)».«field.content»");
-				«ELSE»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(field, true)».«field.content»");
-				«ENDIF»		
+			
+			«FOR sourceFieldPathIf : element.eAllContents.toIterable.filter(typeof(SourceFieldPathIf))»
+				«FOR featureCall:sourceFieldPathIf.getIf().eAllContents.toIterable.filter(typeof(XFeatureCall))»
+					«IF Util.isNotInMemberFeatureCall(featureCall)»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(featureCall, true)».«featureCall»");
+					«ENDIF»	
+				«ENDFOR»
+				«FOR featureCall:sourceFieldPathIf.getElse().eAllContents.toIterable.filter(typeof(XFeatureCall))»
+					«IF Util.isNotInMemberFeatureCall(featureCall)»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(featureCall, true)».«featureCall»");
+					«ENDIF»	
+				«ENDFOR»
+				«FOR memberFeatureCall:sourceFieldPathIf.getIf().eAllContents.toIterable.filter(typeof(XMemberFeatureCall))»
+					«IF Util.isTopMemberFeatureCall(memberFeatureCall)»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(memberFeatureCall, true)».«Util.getXMemberFeatureCallPath(memberFeatureCall.memberCallTarget as XAbstractFeatureCall, memberFeatureCall.concreteSyntaxFeatureName)»");
+					«ENDIF»	
+				«ENDFOR»
+				«FOR memberFeatureCall:sourceFieldPathIf.getElse().eAllContents.toIterable.filter(typeof(XMemberFeatureCall))»
+					«IF Util.isTopMemberFeatureCall(memberFeatureCall)»
+						instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(memberFeatureCall, true)».«Util.getXMemberFeatureCallPath(memberFeatureCall.memberCallTarget as XAbstractFeatureCall, memberFeatureCall.concreteSyntaxFeatureName)»");
+					«ENDIF»	
+				«ENDFOR»
+			«ENDFOR»			
+			
+			«FOR targetFieldPath : element.eAllContents.toIterable.filter(typeof(TargetFieldPath))»
+				instance.getRawTargetFieldPaths().add("«Util.getFullModelPath(targetFieldPath, false)».«targetFieldPath.expression»");												
 			«ENDFOR»
-			«FOR memberFeatureCall:sourceFieldPath.eAllContents.toIterable.filter(typeof(XMemberFeatureCall))»
-				«IF Util.isTopMemberFeatureCall(memberFeatureCall)»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(memberFeatureCall, true)».«Util.getXMemberFeatureCallPath(memberFeatureCall.memberCallTarget as XAbstractFeatureCall, memberFeatureCall.concreteSyntaxFeatureName)»");
-				«ENDIF»	
-			«ENDFOR»
-			«FOR featureCall:sourceFieldPath.eAllContents.toIterable.filter(typeof(XFeatureCall))»
-				«IF Util.isNotInMemberFeatureCall(featureCall)»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(featureCall, true)».«featureCall»");
-				«ENDIF»	
-			«ENDFOR»
-		«ENDFOR»
-		
-		«FOR sourceFieldPathIf : element.eAllContents.toIterable.filter(typeof(SourceFieldPathIf))»
-			«FOR featureCall:sourceFieldPathIf.getIf().eAllContents.toIterable.filter(typeof(XFeatureCall))»
-				«IF Util.isNotInMemberFeatureCall(featureCall)»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(featureCall, true)».«featureCall»");
-				«ENDIF»	
-			«ENDFOR»
-			«FOR featureCall:sourceFieldPathIf.getElse().eAllContents.toIterable.filter(typeof(XFeatureCall))»
-				«IF Util.isNotInMemberFeatureCall(featureCall)»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(featureCall, true)».«featureCall»");
-				«ENDIF»	
-			«ENDFOR»
-			«FOR memberFeatureCall:sourceFieldPathIf.getIf().eAllContents.toIterable.filter(typeof(XMemberFeatureCall))»
-				«IF Util.isTopMemberFeatureCall(memberFeatureCall)»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(memberFeatureCall, true)».«Util.getXMemberFeatureCallPath(memberFeatureCall.memberCallTarget as XAbstractFeatureCall, memberFeatureCall.concreteSyntaxFeatureName)»");
-				«ENDIF»	
-			«ENDFOR»
-			«FOR memberFeatureCall:sourceFieldPathIf.getElse().eAllContents.toIterable.filter(typeof(XMemberFeatureCall))»
-				«IF Util.isTopMemberFeatureCall(memberFeatureCall)»
-					instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(memberFeatureCall, true)».«Util.getXMemberFeatureCallPath(memberFeatureCall.memberCallTarget as XAbstractFeatureCall, memberFeatureCall.concreteSyntaxFeatureName)»");
-				«ENDIF»	
-			«ENDFOR»
-		«ENDFOR»			
-		
-		«FOR targetFieldPath : element.eAllContents.toIterable.filter(typeof(TargetFieldPath))»
-			«FOR fieldName:targetFieldPath.eAllContents.toIterable.filter(typeof(XFeatureCall))»
-				instance.getRawTargetFieldPaths().add("«Util.getFullModelPath(fieldName, false)».«fieldName»");												
-			«ENDFOR»
-		«ENDFOR»
 	'''
 }

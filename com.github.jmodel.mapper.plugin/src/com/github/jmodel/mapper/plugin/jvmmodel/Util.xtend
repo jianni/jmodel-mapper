@@ -7,8 +7,8 @@ import org.eclipse.xtext.xbase.XMemberFeatureCall
 import java.util.Stack
 import org.eclipse.xtext.xbase.XIfExpression
 import com.github.jmodel.mapper.plugin.mappingLanguage.Filter
-import com.github.jmodel.mapper.plugin.mappingLanguage.MappingBlock
-import com.github.jmodel.mapper.plugin.mappingLanguage.SourceFieldPathXFeatureCall
+import com.github.jmodel.mapper.plugin.mappingLanguage.Block
+import com.github.jmodel.mapper.plugin.mappingLanguage.SingleSourceFieldPath
 import com.github.jmodel.mapper.plugin.mappingLanguage.Body
 
 class Util {
@@ -24,7 +24,7 @@ class Util {
 	def static boolean isInFilter(EObject x) {
 		if (x instanceof Filter) {
 			return true;
-		} else if (x instanceof MappingBlock) {
+		} else if (x instanceof Block) {
 			return false;
 		} else {
 			return isInFilter(x.eContainer);
@@ -34,7 +34,7 @@ class Util {
 	def static boolean isInAppendPath(EObject x) {
 		if (x instanceof Body) {
 			return false;
-		} else if (x instanceof MappingBlock) {
+		} else if (x instanceof Block) {
 			if (x.isAppend != null) {
 				return true;
 			}
@@ -45,7 +45,7 @@ class Util {
 	def static boolean isInXIfExpression(EObject x) {
 		if (x instanceof XIfExpression) {
 			return true;
-		} else if (x instanceof MappingBlock) {
+		} else if (x instanceof Block) {
 			return false;
 		} else {
 			return isInFilter(x.eContainer);
@@ -59,6 +59,14 @@ class Util {
 		val sourceModelPath = getFullModelPath(eObj, true)
 		val targetModelPath = getFullModelPath(eObj, false)
 		sourceModelPath.contains("[") || targetModelPath.contains("[")
+	}
+
+	/**
+	 * If the EObject is in a source array path, include self, then return true 
+	 */
+	def static boolean isSourceArrayPath(EObject eObj) {
+		val sourceModelPath = getFullModelPath(eObj, true)
+		sourceModelPath.contains("[")
 	}
 
 	/**
@@ -115,124 +123,131 @@ class Util {
 		}
 	}
 
-	def static void buildMappingBlockStack(Stack<MappingBlock> mappingBlockStack, EObject eObj) {
-		if (eObj instanceof MappingBlock) {
-			mappingBlockStack.push(eObj)
+	def static void buildBlockStack(Stack<Block> blockStack, EObject eObj) {
+		if (eObj instanceof Block) {
+			blockStack.push(eObj)
 			if (eObj.eContainer instanceof Body) {
 				return
 			}
 		}
-		buildMappingBlockStack(mappingBlockStack, eObj.eContainer)
+		buildBlockStack(blockStack, eObj.eContainer)
 	}
 
 	def static String getSourceModelPathByPath(EObject eObj) {
-		getFullModelPath(getMappingBlockByPath(eObj), true)
+		getFullModelPath(getBlockByPath(eObj), true)
 	}
 
 	def static String getTargetModelPathByPath(EObject eObj) {
-		getFullModelPath(getMappingBlockByPath(eObj), false)
+		getFullModelPath(getBlockByPath(eObj), false)
 	}
 
-	def static MappingBlock getMappingBlockByPath(EObject eObj) {
+	def static Block getBlockByPath(EObject eObj) {
 
-		val Stack<MappingBlock> mappingBlockStack = new Stack<MappingBlock>()
-		buildMappingBlockStack(mappingBlockStack, eObj)
-		if (eObj instanceof MappingBlock) {
-			getMappingBlockByPath0(mappingBlockStack, eObj.isFollowRootPath.length)
-		} else if (eObj instanceof SourceFieldPathXFeatureCall) {
-			getMappingBlockByPath0(mappingBlockStack, eObj.isFollowRootPath.length)
+		val Stack<Block> blockStack = new Stack<Block>()
+		buildBlockStack(blockStack, eObj)
+		if (eObj instanceof Block) {
+			getBlockByPath0(blockStack, eObj.absolutePath.length)
+		} else if (eObj instanceof SingleSourceFieldPath) {
+			getBlockByPath0(blockStack, eObj.absolutePath.length)
 		} else if (eObj instanceof Body) {
 			throw new RuntimeException("please contact system administrator");
 		} else {
-			getMappingBlockByPath(eObj.eContainer);
+			getBlockByPath(eObj.eContainer);
 		}
 	}
 
-	def static MappingBlock getMappingBlockByPath0(Stack<MappingBlock> mappingBlockStack, int index) {
+	def static Block getBlockByPath0(Stack<Block> blockStack, int index) {
 		if (index == 1) {
-			mappingBlockStack.pop
+			blockStack.pop
 		} else {
-			mappingBlockStack.pop
-			getMappingBlockByPath0(mappingBlockStack, index - 1)
+			blockStack.pop
+			getBlockByPath0(blockStack, index - 1)
 		}
 	}
 
-	def static MappingBlock getCurrentMappingBlock(EObject eObj) {
-		if (eObj instanceof MappingBlock) {
+	def static Block getCurrentBlock(EObject eObj) {
+
+		if (eObj instanceof SingleSourceFieldPath) {
+			if (eObj.absolutePath != null) {
+				return getBlockByPath(eObj)
+			}
+		}
+
+		if (eObj instanceof Block) {
 			return eObj
 		} else {
-			return getCurrentMappingBlock(eObj.eContainer)
+			return getCurrentBlock(eObj.eContainer)
 		}
 	}
 
-	def static MappingBlock getCurrentAliasedMappingBlockForTargetModelPath(EObject eObj) {
-		if (eObj instanceof MappingBlock && !isDot((eObj as MappingBlock).targetModelPath)) {
-			return eObj as MappingBlock
+	def static Block getCurrentAliasedBlockForTargetModelPath(EObject eObj) {
+		if (eObj instanceof Block && !isDot((eObj as Block).targetModelPath)) {
+			return eObj as Block
 		} else {
-			return getCurrentAliasedMappingBlockForTargetModelPath(eObj.eContainer)
+			return getCurrentAliasedBlockForTargetModelPath(eObj.eContainer)
 		}
 	}
 
-	def static MappingBlock getAppendedMappingBlock(Body mappingBlocks, String fullTargetModelPath) {
-		for (mappingBlock : mappingBlocks.mappingBlocks) {
-			val appendedMappingBlock = getAppendedMappingBlock0(mappingBlock as MappingBlock, fullTargetModelPath)
-			if (appendedMappingBlock != null) {
-				return appendedMappingBlock
+	def static Block getAppendedBlock(Body body, String fullTargetModelPath) {
+		for (block : body.blocks) {
+			val appendedBlock = getAppendedBlock0(block as Block, fullTargetModelPath)
+			if (appendedBlock != null) {
+				return appendedBlock
 			}
 		}
 		return null
 	}
 
-	def private static MappingBlock getAppendedMappingBlock0(MappingBlock mappingBlock, String fullTargetModelPath) {
-		if (!(mappingBlock.targetModelPath.equals(".")) && mappingBlock.isAppend == null &&
-			fullTargetModelPath.equals(getFullModelPath(mappingBlock, false))) {
-			return mappingBlock
+	def private static Block getAppendedBlock0(Block block, String fullTargetModelPath) {
+		if (!(block.targetModelPath.equals(".")) && block.isAppend == null &&
+			fullTargetModelPath.equals(getFullModelPath(block, false))) {
+			return block
 		} else {
-			for (subMappingBlock : mappingBlock.mappingBlocks) {
-				return getAppendedMappingBlock0(subMappingBlock as MappingBlock, fullTargetModelPath)
+			for (subBlock : block.blocks) {
+				return getAppendedBlock0(subBlock as Block, fullTargetModelPath)
 			}
 			return null
 		}
 	}
 
-	def static MappingBlock getLastArrayMappingBlock(EObject eObj, boolean isOfSourceModel) {
-		getLastArrayMappingBlock0(eObj, isOfSourceModel, 0);
+	def static Block getLastArrayBlock(EObject eObj, boolean isOfSourceModel) {
+		getLastArrayBlock0(eObj, isOfSourceModel, 0);
 	}
 
-	def private static MappingBlock getLastArrayMappingBlock0(EObject eObj, boolean isOfSourceModel, int found) {
+	def private static Block getLastArrayBlock0(EObject eObj, boolean isOfSourceModel, int found) {
 		if (eObj instanceof Body) {
 			return null;
-		} else if (eObj instanceof MappingBlock) {
+		} else if (eObj instanceof Block) {
 
-			if (isOfSourceModel && eObj.isFollowRootPath != null) {
-				return getMappingBlockByPath(eObj); // just for source model
+			if (isOfSourceModel && eObj.absolutePath != null) {
+				return getBlockByPath(eObj); // just for source model
 			}
-			if (Util.isArray(eObj)) {
+			if (isArray(eObj)) {
 				if (found == 1) {
 					return eObj
 				} else {
-					if (!isOfSourceModel && Util.isInAppendPath(eObj)) {
-						return getLastArrayMappingBlock0(eObj.eContainer, isOfSourceModel, found)
+					if (!isOfSourceModel && isInAppendPath(eObj)) {
+						return getLastArrayBlock0(eObj.eContainer, isOfSourceModel, found)
 					} else {
-						return getLastArrayMappingBlock0(eObj.eContainer, isOfSourceModel, found + 1)
+						return getLastArrayBlock0(eObj.eContainer, isOfSourceModel, found + 1)
 					}
 				}
 			}
 		}
-		return getLastArrayMappingBlock0(eObj.eContainer, isOfSourceModel, found)
+		return getLastArrayBlock0(eObj.eContainer, isOfSourceModel, found)
 
 	}
 
-	def static Body getMappingBlocks(EObject eObj) {
+	def static Body getBody(EObject eObj) {
 		if (eObj instanceof Body) {
 			return eObj
 		} else {
-			return getMappingBlocks(eObj.eContainer)
+			return getBody(eObj.eContainer)
 		}
 	}
 
 	def static String getCurrentSourceModelPath(EObject eObj) {
-		if (eObj instanceof MappingBlock) {
+		if (eObj instanceof Block) {
 			if (!(eObj.sourceModelPath.equals("."))) {
 				return eObj.sourceModelPath
 			}
@@ -241,7 +256,7 @@ class Util {
 	}
 
 	def static String getCurrentTargetModelPath(EObject eObj) {
-		if (eObj instanceof MappingBlock) {
+		if (eObj instanceof Block) {
 			if (!(eObj.targetModelPath.equals("."))) {
 				return eObj.targetModelPath
 			}
@@ -279,15 +294,15 @@ class Util {
 	 * 
 	 */
 	def static String getFullModelPath(EObject eObj, boolean isSourceModelPath) {
-		val currentMappingBlock = getCurrentMappingBlock(eObj)
-		if (currentMappingBlock.eContainer instanceof Body) {
+		val currentBlock = getCurrentBlock(eObj)
+		if (currentBlock.eContainer instanceof Body) {
 			if (isSourceModelPath) {
-				return currentMappingBlock.sourceModelPath
+				return currentBlock.sourceModelPath
 			} else {
-				return currentMappingBlock.targetModelPath
+				return currentBlock.targetModelPath
 			}
 		}
-		return getFullModelPath0(currentMappingBlock, "", isSourceModelPath)
+		return getFullModelPath0(currentBlock, "", isSourceModelPath)
 	}
 
 	def private static String getFullModelPath0(EObject eObj, String modelPath, boolean isSourceModelPath) {
@@ -295,41 +310,39 @@ class Util {
 			return modelPath;
 		}
 
-		if (!(eObj instanceof MappingBlock)) {
+		if (!(eObj instanceof Block)) {
 			getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
 		}
 
-		val MappingBlock mappingBlock = (eObj as MappingBlock)
+		val Block block = (eObj as Block)
 
 		if (isSourceModelPath) {
-			if (mappingBlock.isFollowRootPath != null) {
-				if (mappingBlock.sourceModelPath.equals(".")) {
-					return getSourceModelPathByPath(mappingBlock)
+			if (block.absolutePath != null) {
+				if (block.sourceModelPath.equals(".")) {
+					return getSourceModelPathByPath(block)
 				} else {
-					return getSourceModelPathByPath(mappingBlock) + '.' + mappingBlock.sourceModelPath
+					return getSourceModelPathByPath(block) + '.' + block.sourceModelPath
 				}
 			} else {
-				if (mappingBlock.sourceModelPath.equals(".")) {
+				if (block.sourceModelPath.equals(".")) {
 					getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
 				} else {
 					if (modelPath.trim.length == 0) {
-						getFullModelPath0(eObj.eContainer, mappingBlock.sourceModelPath, isSourceModelPath)
+						getFullModelPath0(eObj.eContainer, block.sourceModelPath, isSourceModelPath)
 					} else {
-						getFullModelPath0(eObj.eContainer, mappingBlock.sourceModelPath + '.' + modelPath,
-							isSourceModelPath)
+						getFullModelPath0(eObj.eContainer, block.sourceModelPath + '.' + modelPath, isSourceModelPath)
 					}
 
 				}
 			}
 		} else {
-			if (mappingBlock.targetModelPath.equals(".")) {
+			if (block.targetModelPath.equals(".")) {
 				getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
 			} else {
 				if (modelPath.trim.length == 0) {
-					getFullModelPath0(eObj.eContainer, mappingBlock.targetModelPath, isSourceModelPath)
+					getFullModelPath0(eObj.eContainer, block.targetModelPath, isSourceModelPath)
 				} else {
-					getFullModelPath0(eObj.eContainer, mappingBlock.targetModelPath + '.' + modelPath,
-						isSourceModelPath)
+					getFullModelPath0(eObj.eContainer, block.targetModelPath + '.' + modelPath, isSourceModelPath)
 				}
 
 			}

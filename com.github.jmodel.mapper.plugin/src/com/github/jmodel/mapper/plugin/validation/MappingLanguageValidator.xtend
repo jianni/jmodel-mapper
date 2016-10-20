@@ -1,6 +1,6 @@
 package com.github.jmodel.mapper.plugin.validation
 
-import com.github.jmodel.mapper.plugin.mappingLanguage.MappingBlock
+import com.github.jmodel.mapper.plugin.mappingLanguage.Block
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.xbase.XExpression
 
@@ -12,14 +12,14 @@ import org.eclipse.xtext.xbase.XExpression
 class MappingLanguageValidator extends AbstractMappingLanguageValidator {
 
 	@Check
-	def checkMappingBlock(MappingBlock mappingBlock) {
-		var firstPosition = mappingBlock.sourceModelPath.indexOf('[')
-		if (firstPosition > 0 && firstPosition != mappingBlock.sourceModelPath.lastIndexOf('[')) {
-			error('Two array models is not allowed in a mapping block', mappingBlock, null)
+	def checkBlock(Block block) {
+		var firstPosition = block.sourceModelPath.indexOf('[')
+		if (firstPosition > 0 && firstPosition != block.sourceModelPath.lastIndexOf('[')) {
+			error('Two array models is not allowed in a mapping block', block, null)
 		}
-		firstPosition = mappingBlock.targetModelPath.indexOf('[')
-		if (firstPosition > 0 && firstPosition != mappingBlock.targetModelPath.lastIndexOf('[')) {
-			error('Two array models is not allowed in a mapping block', mappingBlock, null)
+		firstPosition = block.targetModelPath.indexOf('[')
+		if (firstPosition > 0 && firstPosition != block.targetModelPath.lastIndexOf('[')) {
+			error('Two array models is not allowed in a mapping block', block, null)
 		}
 	}
 

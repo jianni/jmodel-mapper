@@ -14,15 +14,15 @@ To:
 
 Body returns xbase::XBlockExpression:
 	{Body}
-	mappingBlocks+=MappingBlock+;
+	blocks+=Block+;
 
-MappingBlock returns xbase::XBlockExpression:
-	{MappingBlock}
-	(isFollowRootPath=IsFollowRootPath)? sourceModelPath=ModelPathExpr '=>' targetModelPath=ModelPathExpr (isAppend='+')?
+Block returns xbase::XBlockExpression:
+	{Block}
+	(absolutePath=AbsolutePath)? sourceModelPath=ModelPathExpr '=>' targetModelPath=ModelPathExpr (isAppend='+')?
 	'{' (filter=Filter)?
-	fieldMappings+=FieldMapping* mappingBlocks+=MappingBlock* '};';
+	fieldMappings+=FieldMapping* blocks+=Block* '};';
 
-IsFollowRootPath:
+AbsolutePath:
 	'#'+;
 
 ModelPathExpr:
@@ -38,23 +38,23 @@ FieldMapping returns xbase::XBlockExpression:
 
 SingleTargetFieldMapping returns xbase::XExpression:
 	{SingleTargetFieldMapping}
-	sourceFieldPath=SourceFieldPath '=>' targetFieldName=TargetFieldPath ';';
+	sourceFieldPath=SourceFieldPath '=>' targetFieldPath=TargetFieldPath ';';
 
 TargetFieldPath returns xbase::XExpression:
 	{TargetFieldPath}
-	expression=XFeatureCall;
+	expression=ValidID;
 
 SourceFieldPath returns xbase::XExpression:
 	{SourceFieldPath}
-	expression=(SourceFieldPathXLiteral | SourceFieldPathXParenthesizedExpression | SourceFieldPathXFeatureCall);
+	expression=(SourceFieldPathXLiteral | SourceFieldPathXParenthesizedExpression | SingleSourceFieldPath);
 
 SourceFieldPathXLiteral returns xbase::XExpression:
 	{SourceFieldPathXLiteral}
 	content=XLiteral;
 
-SourceFieldPathXFeatureCall returns xbase::XExpression:
-	{SourceFieldPathXFeatureCall}
-	(isFollowRootPath=IsFollowRootPath)? content=QualifiedName;
+SingleSourceFieldPath returns xbase::XExpression:
+	{SingleSourceFieldPath}
+	(absolutePath=AbsolutePath)? content=QualifiedName;
 
 SourceFieldPathXParenthesizedExpression returns xbase::XExpression:
 	{SourceFieldPathXParenthesizedExpression}
@@ -62,11 +62,10 @@ SourceFieldPathXParenthesizedExpression returns xbase::XExpression:
 
 XPrimaryExpression returns xbase::XExpression:
 	XBlockExpression |
-	XFeatureCall |
 	XLiteral |
 	XIfExpression |
 	XParenthesizedExpression |
-	SourceFieldPathXFeatureCall;
+	SingleSourceFieldPath;
 
 IfTargetFieldsMapping returns xbase::XExpression:
 	{IfTargetFieldsMapping}
