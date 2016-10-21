@@ -22,7 +22,7 @@ Require-Bundle: com.github.jmodel.mapper.plugin;visibility:=reexport,
  com.github.jmodel.mapper.api;bundle-version="0.0.1"
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: com.github.jmodel.mapper.plugin.ui.contentassist,
  com.github.jmodel.mapper.plugin.ui.quickfix,
  com.github.jmodel.mapper.plugin.ui.contentassist.antlr,
