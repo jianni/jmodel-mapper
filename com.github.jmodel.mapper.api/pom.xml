@@ -11,27 +11,23 @@
 
 	<artifactId>com.github.jmodel.mapper.api</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<!-- <packaging>jar</packaging> -->
 
 	<name>jmodel-mapper API</name>
 	<url>http://www.github.com/jianni/jmodel-mapper</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.8</jdk.version>
-		<junit.version>4.12</junit.version>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArguments>
+						<properties>${project.basedir}/.settings/org.eclipse.jdt.core.prefs</properties>
+					</compilerArguments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 
 
