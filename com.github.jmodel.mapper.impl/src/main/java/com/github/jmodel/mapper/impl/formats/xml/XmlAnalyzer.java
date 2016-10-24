@@ -20,7 +20,7 @@ import com.github.jmodel.mapper.api.Entity;
 import com.github.jmodel.mapper.api.Field;
 import com.github.jmodel.mapper.api.Model;
 
-public class XMLAnalyzer implements Analyzer {
+public class XmlAnalyzer implements Analyzer {
 
 	public Model process(Model sourceModel, Object sourceObject) {
 		try {

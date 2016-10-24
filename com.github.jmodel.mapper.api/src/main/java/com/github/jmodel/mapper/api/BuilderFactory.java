@@ -1,6 +1,6 @@
 package com.github.jmodel.mapper.api;
 
-public interface BuilderFactory {
+public interface BuilderFactory<R> {
 
-	public Builder createBuilder(FormatEnum toFormat) throws IllegalException;
+	public Builder<R> createBuilder(FormatEnum toFormat) throws IllegalException;
 }

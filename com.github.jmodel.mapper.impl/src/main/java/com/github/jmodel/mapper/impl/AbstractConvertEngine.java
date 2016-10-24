@@ -4,7 +4,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +16,6 @@ import com.github.jmodel.mapper.api.AnalyzerFactory;
 import com.github.jmodel.mapper.api.Array;
 import com.github.jmodel.mapper.api.Builder;
 import com.github.jmodel.mapper.api.BuilderFactory;
-import com.github.jmodel.mapper.api.Engine;
 import com.github.jmodel.mapper.api.Entity;
 import com.github.jmodel.mapper.api.Field;
 import com.github.jmodel.mapper.api.FormatChecker;
@@ -23,31 +24,38 @@ import com.github.jmodel.mapper.api.IllegalException;
 import com.github.jmodel.mapper.api.Mapping;
 import com.github.jmodel.mapper.api.Model;
 
-public class BaseConvertEngine implements Engine {
+public abstract class AbstractConvertEngine {
+
+	protected ResourceBundle messages;
 
 	protected FormatCheckerFactory formatCheckerFactory = new FormatCheckerFactoryImpl();
 
 	protected AnalyzerFactory analyzerFactory = new AnalyzerFactoryImpl();
 
-	protected BuilderFactory builderFactory = new BuilderFactoryImpl();
+	protected BuilderFactory<String> builderFactory = new BuilderFactoryStringImpl();
 
-	private static String DEFAULT_PACKAGE_NAME = "com.github.jmodel.mapper";
+	protected static String DEFAULT_PACKAGE_NAME = "com.github.jmodel.mapper";
 
-	private static String NAME_PATTERN = "^([a-zA-Z0-9]\\d*(\\.[a-zA-Z0-9])?)+$";
+	protected static String NAME_PATTERN = "^([a-zA-Z0-9]\\d*(\\.[a-zA-Z0-9])?)+$";
 
-	public <T, R> R convert(T sourceObj, String mappingURI) throws IllegalException {
+	protected <T> Object getResult(T sourceObj, String mappingURI, Locale currentLocale) throws IllegalException {
+
+		messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle", currentLocale);
+
 		if (sourceObj == null) {
-			throw new IllegalException("source object is null");
+			throw new IllegalException(messages.getString("SRC_IS_NULL"));
 		}
+
 		if (mappingURI == null || !Pattern.matches(NAME_PATTERN, mappingURI)) {
-			throw new IllegalException("mappingName is illegal");
+			throw new IllegalException(messages.getString("M_NAME_IS_ILLEGAL"));
 		}
+
 		// TODO consider more loading mechanism later, local or remote
 		Class<?> mappingClz;
 		try {
 			mappingClz = Class.forName(mappingURI);
 		} catch (ClassNotFoundException e) {
-			throw new IllegalException("mapping is not exists");
+			throw new IllegalException(messages.getString("M_IS_MISSING"));
 		}
 
 		Mapping mapping;
@@ -55,15 +63,13 @@ public class BaseConvertEngine implements Engine {
 			Method method = mappingClz.getMethod("getInstance");
 			mapping = (Mapping) (method.invoke(null));
 		} catch (Exception e) {
-			throw new IllegalException("mapping content is illegal");
-		}
-		if (mapping == null) {
-			throw new IllegalException("mapping is found but not avaliable");
+			throw new IllegalException(messages.getString("M_IS_ILLEGAL"));
 		}
 
 		FormatChecker formatChecker = formatCheckerFactory.createFormatChecker(mapping.getFromFormat());
 		if (!formatChecker.isValid(sourceObj)) {
-			throw new IllegalException("format of source is not supported");
+			throw new IllegalException(String.format(currentLocale, messages.getString("SRC_FMT_NOT_SUPPORT"),
+					sourceObj.getClass().getName(), mapping.getFromFormat()));
 		}
 
 		Model sourceTemplateModel = mapping.getSourceTemplateModel();
@@ -80,8 +86,10 @@ public class BaseConvertEngine implements Engine {
 		fillTargetInstance(targetModel, new HashMap<String, Field>(), new HashMap<String, Model>());
 		mapping.execute(sourceModel, targetModel);
 		cleanUnusedField(targetModel);
-		Builder builder = builderFactory.createBuilder(mapping.getToFormat());
-		return (R) builder.process(targetModel);
+
+		Builder<?> builder = getBuilderFactory().createBuilder(mapping.getToFormat());
+
+		return builder.process(targetModel);
 	}
 
 	private void fillTargetInstance(Model targetInstanceModel, Map<String, Field> filePathMap,
@@ -252,5 +260,7 @@ public class BaseConvertEngine implements Engine {
 
 		}
 	}
+
+	protected abstract BuilderFactory<?> getBuilderFactory();
 
 }

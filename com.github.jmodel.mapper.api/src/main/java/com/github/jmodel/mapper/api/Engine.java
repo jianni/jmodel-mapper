@@ -1,7 +1,11 @@
 package com.github.jmodel.mapper.api;
 
-public interface Engine {
+import java.util.Locale;
 
-	public <T extends Object, R extends Object> R convert(T sourceObj, String mappingURI) throws IllegalException;
-	
+public interface Engine<R> {
+
+	public <T> R convert(T sourceObj, String mappingURI) throws IllegalException;
+
+	public <T> R convert(T sourceObj, String mappingURI, Locale currentLocale) throws IllegalException;
+
 }

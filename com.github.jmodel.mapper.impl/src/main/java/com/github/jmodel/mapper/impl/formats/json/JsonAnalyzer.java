@@ -15,7 +15,7 @@ import com.github.jmodel.mapper.api.Field;
 import com.github.jmodel.mapper.api.IllegalException;
 import com.github.jmodel.mapper.api.Model;
 
-public class JSONAnalyzer implements Analyzer {
+public class JsonAnalyzer implements Analyzer {
 
 	public <T> Model process(Model sourceModel, T sourceObject) throws IllegalException {
 		// filtered by format checker previously

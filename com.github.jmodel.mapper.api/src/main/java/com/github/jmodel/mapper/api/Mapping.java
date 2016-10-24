@@ -11,7 +11,7 @@ public abstract class Mapping {
 
 	private Analyzer analyzer;
 
-	private Builder builder;
+	private Builder<?> builder;
 
 	private Model sourceTemplateModel;
 
@@ -47,11 +47,11 @@ public abstract class Mapping {
 		this.analyzer = analyzer;
 	}
 
-	public Builder getBuilder() {
+	public Builder<?> getBuilder() {
 		return builder;
 	}
 
-	public void setBuilder(Builder builder) {
+	public void setBuilder(Builder<?> builder) {
 		this.builder = builder;
 	}
 

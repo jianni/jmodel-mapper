@@ -1,43 +1,27 @@
 package com.github.jmodel.mapper.impl.formats.json;
 
-import java.io.StringWriter;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.jmodel.mapper.api.Array;
-import com.github.jmodel.mapper.api.Builder;
 import com.github.jmodel.mapper.api.Entity;
 import com.github.jmodel.mapper.api.Field;
 import com.github.jmodel.mapper.api.Model;
 
-public class JSONBuilder implements Builder {
+public class JsonBuilderHelper {
 
-	private final JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
-	private JsonFactory jsonFactory = new JsonFactory();
+	private final static JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
 
-	public Object process(Model targetModel) {
+	public final static JsonNode buildJsonNode(final Model targetModel) {
 		ObjectNode rootNode = jsonNodeFactory.objectNode();
 		createJsonNode(jsonNodeFactory, rootNode, targetModel);
-		StringWriter stringWriter = new StringWriter();
-
-		try {
-			JsonGenerator generator = jsonFactory.createGenerator(stringWriter);
-			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.writeTree(generator, rootNode);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return stringWriter.toString();
+		return rootNode;
 	}
 
-	private JsonNode createJsonNode(final JsonNodeFactory factory, ObjectNode node, Model model) {
+	private final static JsonNode createJsonNode(final JsonNodeFactory factory, ObjectNode node, Model model) {
 
 		if (model != null) {
 			List<Field> fields = ((Entity) model).getFields();
@@ -67,4 +51,5 @@ public class JSONBuilder implements Builder {
 		}
 		return node;
 	}
+
 }

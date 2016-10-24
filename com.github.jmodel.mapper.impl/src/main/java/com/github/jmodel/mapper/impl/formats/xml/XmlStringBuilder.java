@@ -21,9 +21,9 @@ import com.github.jmodel.mapper.api.Entity;
 import com.github.jmodel.mapper.api.Field;
 import com.github.jmodel.mapper.api.Model;
 
-public class XMLBuilder implements Builder {
+public class XmlStringBuilder implements Builder<String> {
 
-	public Object process(Model targetModel) {
+	public String process(Model targetModel) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = null;
 		try {

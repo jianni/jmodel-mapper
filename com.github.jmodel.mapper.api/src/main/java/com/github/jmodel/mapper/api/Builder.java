@@ -1,6 +1,6 @@
 package com.github.jmodel.mapper.api;
 
-public interface Builder {
+public interface Builder<R> {
 
-	public Object process(Model targetModel);
+	public R process(Model targetModel);
 }
