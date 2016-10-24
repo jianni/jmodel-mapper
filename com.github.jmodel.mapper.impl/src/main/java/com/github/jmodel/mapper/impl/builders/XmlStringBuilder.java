@@ -1,4 +1,4 @@
-package com.github.jmodel.mapper.impl.formats.xml;
+package com.github.jmodel.mapper.impl.builders;
 
 import java.io.StringWriter;
 import java.util.List;

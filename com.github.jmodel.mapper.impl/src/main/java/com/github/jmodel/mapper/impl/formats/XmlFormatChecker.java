@@ -1,12 +1,13 @@
-package com.github.jmodel.mapper.impl.formats.xml;
+package com.github.jmodel.mapper.impl.formats;
+
+import java.io.InputStream;
 
 import com.github.jmodel.mapper.api.FormatChecker;
 
 public class XmlFormatChecker implements FormatChecker {
 
-	//TODO
 	public boolean isValid(Object sourceObject) {
-		if (sourceObject instanceof String) {
+		if (sourceObject instanceof String || sourceObject instanceof InputStream) {
 			return true;
 		}
 		return false;

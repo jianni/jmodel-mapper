@@ -1,4 +1,4 @@
-package com.github.jmodel.mapper.impl.formats.json;
+package com.github.jmodel.mapper.impl.builders;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jmodel.mapper.api.Builder;

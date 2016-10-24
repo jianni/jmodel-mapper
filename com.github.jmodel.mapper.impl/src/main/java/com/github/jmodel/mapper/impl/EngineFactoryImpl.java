@@ -2,6 +2,8 @@ package com.github.jmodel.mapper.impl;
 
 import com.github.jmodel.mapper.api.Engine;
 import com.github.jmodel.mapper.api.EngineFactory;
+import com.github.jmodel.mapper.impl.engines.ConvertToJsonNodeEngine;
+import com.github.jmodel.mapper.impl.engines.ConvertToStringEngine;
 
 public class EngineFactoryImpl implements EngineFactory {
 

@@ -89,5 +89,5 @@ SourceFieldPathSetting returns xbase::XBlockExpression:
 	set+=SingleTargetFieldMapping+;
 
 enum Format:
-	XML='XML' | JSON='JSON';
+	XML='XML' | JSON='JSON' | BEAN='BEAN';
 

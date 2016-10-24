@@ -23,6 +23,7 @@ import com.github.jmodel.mapper.api.FormatCheckerFactory;
 import com.github.jmodel.mapper.api.IllegalException;
 import com.github.jmodel.mapper.api.Mapping;
 import com.github.jmodel.mapper.api.Model;
+import com.github.jmodel.mapper.impl.builders.BuilderFactoryStringImpl;
 
 public abstract class AbstractConvertEngine {
 

@@ -1,4 +1,4 @@
-package com.github.jmodel.mapper.impl.formats.json;
+package com.github.jmodel.mapper.impl.builders;
 
 import java.util.List;
 

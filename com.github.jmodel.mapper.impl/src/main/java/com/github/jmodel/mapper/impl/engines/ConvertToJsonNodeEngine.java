@@ -1,4 +1,4 @@
-package com.github.jmodel.mapper.impl;
+package com.github.jmodel.mapper.impl.engines;
 
 import java.util.Locale;
 
@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jmodel.mapper.api.BuilderFactory;
 import com.github.jmodel.mapper.api.Engine;
 import com.github.jmodel.mapper.api.IllegalException;
+import com.github.jmodel.mapper.impl.AbstractConvertEngine;
+import com.github.jmodel.mapper.impl.builders.BuilderFactoryJsonNodeImpl;
 
 public class ConvertToJsonNodeEngine extends AbstractConvertEngine implements Engine<JsonNode> {
 

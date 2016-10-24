@@ -1,4 +1,4 @@
-package com.github.jmodel.mapper.impl.formats.json;
+package com.github.jmodel.mapper.impl.formats;
 
 import java.io.File;
 import java.io.InputStream;
