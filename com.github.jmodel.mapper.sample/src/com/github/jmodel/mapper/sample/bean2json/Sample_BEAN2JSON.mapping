@@ -1,0 +1,19 @@
+mapping com.github.jmodel.mapper.sample.bean2json.Sample_BEAN2JSON {
+	   
+	from: BEAN
+	to: JSON 
+	     
+	Entity => MyField {		
+		Name => XXX; 
+		Fields[] => YYY[] { 
+			Name => HHH;
+		};		
+	};
+}
+
+
+
+
+
+
+

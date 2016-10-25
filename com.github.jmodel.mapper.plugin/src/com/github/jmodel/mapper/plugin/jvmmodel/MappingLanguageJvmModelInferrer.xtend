@@ -118,6 +118,8 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 			instance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.JSON);														
 		«ELSEIF element.to.name.literal== 'XML'» 
 			instance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.XML);	
+		«ELSEIF element.to.name.literal== 'BEAN'» 
+			instance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.BEAN);	
 		«ENDIF»	
 		
 		com.github.jmodel.mapper.api.Entity sourceRootModel = new com.github.jmodel.mapper.impl.EntityImpl();

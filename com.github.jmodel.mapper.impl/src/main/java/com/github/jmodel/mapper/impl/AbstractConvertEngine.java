@@ -37,7 +37,7 @@ public abstract class AbstractConvertEngine {
 
 	protected static String DEFAULT_PACKAGE_NAME = "com.github.jmodel.mapper";
 
-	protected static String NAME_PATTERN = "^([a-zA-Z0-9]\\d*(\\.[a-zA-Z0-9])?)+$";
+	protected static String NAME_PATTERN = "([a-zA-Z_][a-zA-Z\\d_]*\\.)*[a-zA-Z_][a-zA-Z\\d_]*";
 
 	protected <T> Object getResult(T sourceObj, String mappingURI, Locale currentLocale) throws IllegalException {
 

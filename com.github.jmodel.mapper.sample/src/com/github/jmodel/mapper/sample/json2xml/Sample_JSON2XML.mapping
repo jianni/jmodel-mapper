@@ -1,8 +1,8 @@
-mapping com.github.jmodel.mapper.sample.SampleMapping { 
+mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML { 
 	
-	from: JSON
-	to: JSON  
-	    
+	from: JSON 
+	to: XML  
+	                         
 	/**
 	 * From Policy to PolicyEntity
      */    
@@ -22,7 +22,7 @@ mapping com.github.jmodel.mapper.sample.SampleMapping {
 			ELSE
 				Customer.PartyType => ContactType;    	
 			ENDIF  
-		   
+		      
 		    /**
 		 	 * Supplement Contact Info
 		     */
@@ -85,8 +85,8 @@ mapping com.github.jmodel.mapper.sample.SampleMapping {
 	 	 	 * Construct Policy Limit Info
          	 */ 
 			. => PolicyLimit { 
-				:SumInsured != null      
-				"PolicyLimitType" => Type;      
+				:SumInsured != null || SumInsured == ""     
+				"PolicyLimitType" => Type;           
 				
 				/**
 	 	 	 	 * Construct Policy Limit Value Info
@@ -118,5 +118,5 @@ mapping com.github.jmodel.mapper.sample.SampleMapping {
 			};							      
 		};		 
 	};	
-	 
+	   
 }

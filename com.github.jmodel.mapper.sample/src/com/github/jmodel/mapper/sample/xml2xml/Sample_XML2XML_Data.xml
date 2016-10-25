@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<PolicyEntity>
+	<Type>PolicyType</Type>
+	<EffDate>2016-08-25</EffDate>
+	<ExpDate>2017-08-24</ExpDate>
+	<ProductCode>12345</ProductCode>
+	<PartyList>
+		<ContactType>2</ContactType>
+		<ContactName>jmodel contact name</ContactName>
+		<ContactAddress>1;310000;310100;jmodel address line 1;jmodel address
+			line 1</ContactAddress>
+	</PartyList>
+	<PartyList>
+		<ContactType>2</ContactType>
+		<ContactName>jmodel contact name</ContactName>
+		<ContactAddress>1;310000;310100;jmodel address line 1;jmodel address
+			line 1</ContactAddress>
+	</PartyList>
+	<PartyList>
+		<ContactType>2</ContactType>
+		<ContactName>jmodel contact name</ContactName>
+		<ContactAddress>1;310000;310100;address line 1;address line 1
+		</ContactAddress>
+		<PartyName>jmodel party name</PartyName>
+	</PartyList>
+	<InsuredList>
+		<Type>RiskType</Type>
+		<CountryCode>1</CountryCode>
+		<InsuredCategory>3</InsuredCategory>
+		<InsuredName>1;310000;310100;;test</InsuredName>
+		<PolicyLimit>
+			<Type>PolicyLimitType</Type>
+			<PolicyLimitValue>
+				<Type>PolicyLimitValueType</Type>
+				<IsAllowance>0</IsAllowance>
+				<LimitValue>1234567</LimitValue>
+				<ModeType>AOA</ModeType>
+				<ValueType>AMOUNT</ValueType>
+			</PolicyLimitValue>
+		</PolicyLimit>
+		<CoverageList>
+			<Type>PolicyCoverageType</Type>
+			<PolicyRiskNo>111111-3</PolicyRiskNo>
+			<ProductCode>12345</ProductCode>
+		</CoverageList>
+		<CoverageList>
+			<Type>PolicyCoverageType</Type>
+			<ProductCode>12345</ProductCode>
+		</CoverageList>
+	</InsuredList>
+</PolicyEntity>
