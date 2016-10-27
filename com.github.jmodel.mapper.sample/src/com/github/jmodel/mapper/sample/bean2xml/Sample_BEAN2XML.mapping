@@ -1,0 +1,20 @@
+mapping com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML {
+	    
+	from: BEAN
+	to: XML 
+	       
+	Entity => MyField {		
+		Name (INT) => XXX (STR); 
+		Fields[] => YYY[] {   
+			:Name in ${varName}      
+			(Name + Name) => HHH;
+		};		
+	}; 
+}
+
+
+
+
+
+
+

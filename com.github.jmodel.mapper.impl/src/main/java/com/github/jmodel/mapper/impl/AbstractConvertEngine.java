@@ -39,7 +39,8 @@ public abstract class AbstractConvertEngine {
 
 	protected static String NAME_PATTERN = "([a-zA-Z_][a-zA-Z\\d_]*\\.)*[a-zA-Z_][a-zA-Z\\d_]*";
 
-	protected <T> Object getResult(T sourceObj, String mappingURI, Locale currentLocale) throws IllegalException {
+	protected <T> Object getResult(T sourceObj, String mappingURI, Map<String, Object> argsMap, Locale currentLocale)
+			throws IllegalException {
 
 		messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle", currentLocale);
 
@@ -67,6 +68,16 @@ public abstract class AbstractConvertEngine {
 			throw new IllegalException(messages.getString("M_IS_ILLEGAL"));
 		}
 
+		// check variables
+		if (mapping.getRawVariables().size() > 0) {
+			if (argsMap == null || argsMap.size() == 0) {
+				throw new IllegalException(messages.getString("V_NOT_FOUND"));
+			}
+			if (argsMap.keySet().parallelStream().filter(s -> mapping.getRawVariables().contains(s)).count() == 0) {
+				throw new IllegalException(messages.getString("V_NOT_FOUND"));
+			}
+		}
+
 		FormatChecker formatChecker = formatCheckerFactory.createFormatChecker(mapping.getFromFormat());
 		if (!formatChecker.isValid(sourceObj)) {
 			throw new IllegalException(String.format(currentLocale, messages.getString("SRC_FMT_NOT_SUPPORT"),
@@ -85,7 +96,7 @@ public abstract class AbstractConvertEngine {
 		Model sourceModel = analyzer.process(sourceTemplateModel.clone(), sourceObj);
 		Model targetModel = targetTemplateModel.clone();
 		fillTargetInstance(targetModel, new HashMap<String, Field>(), new HashMap<String, Model>());
-		mapping.execute(sourceModel, targetModel);
+		mapping.execute(sourceModel, targetModel, argsMap);
 		cleanUnusedField(targetModel);
 
 		Builder<?> builder = getBuilderFactory().createBuilder(mapping.getToFormat());

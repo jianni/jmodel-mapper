@@ -20,6 +20,8 @@ import org.eclipse.xtext.xbase.XNumberLiteral
 import org.eclipse.xtext.xbase.XStringLiteral
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import com.github.jmodel.mapper.plugin.mappingLanguage.Variable
+import com.github.jmodel.mapper.plugin.mappingLanguage.DataType
 
 /**
  * The main procedure of compiling:
@@ -44,7 +46,7 @@ class MappingXbaseCompiler extends XbaseCompiler {
 			Block: {
 				val fullSourceModelPath = Util.getFullModelPath(expr, true)
 				val fullTargetModelPath = Util.getFullModelPath(expr, false)
-				val m = it.declareUniqueNameVariable(fullSourceModelPath + "_" + fullTargetModelPath + "_m", "m");
+				val m = declareUniqueNameVariable(fullSourceModelPath + "_" + fullTargetModelPath + "_m", "m");
 
 				newLine
 				append('''{''')
@@ -66,7 +68,7 @@ class MappingXbaseCompiler extends XbaseCompiler {
 						val lastSourceArrayModelPath = Util.getFullModelPath(lastSourceArrayBlock, true)
 						val lastTargetArrayModelPath = Util.getFullModelPath(lastSourceArrayBlock, false)
 
-						val l_m = it.getName(lastSourceArrayModelPath + "_" + lastTargetArrayModelPath + "_m")
+						val l_m = getName(lastSourceArrayModelPath + "_" + lastTargetArrayModelPath + "_m")
 						if (lastSourceArrayModelPath.equals(fullSourceModelPath)) {
 							strSourceModel = '''mySourceModel.getModelPathMap().get(«l_m»[0])'''
 							strSourceModelPath = '''«l_m»[0]'''
@@ -91,7 +93,7 @@ class MappingXbaseCompiler extends XbaseCompiler {
 						} else {
 							val lastSourceArrayModelPath = Util.getFullModelPath(lastTargetArrayBlock, true)
 							val lastTargetArrayModelPath = Util.getFullModelPath(lastTargetArrayBlock, false)
-							val l_m = it.getName(lastSourceArrayModelPath + "_" + lastTargetArrayModelPath + "_m")
+							val l_m = getName(lastSourceArrayModelPath + "_" + lastTargetArrayModelPath + "_m")
 
 							if (lastTargetArrayModelPath.equals(fullTargetModelPath)) {
 								strTargetModel = '''myTargetModel.getModelPathMap().get(«l_m»[1])'''
@@ -127,13 +129,12 @@ class MappingXbaseCompiler extends XbaseCompiler {
 
 					// self is array
 					if (Util.isArray(expr)) {
-						val p = it.declareUniqueNameVariable(fullSourceModelPath + "_" + fullTargetModelPath + "_p",
-							"p")
+						val p = declareUniqueNameVariable(fullSourceModelPath + "_" + fullTargetModelPath + "_p", "p")
 						newLine
 						append('''java.util.function.Predicate<String> «p» = null;''')
 
 						if (expr.filter != null) {
-							val f = it.declareUniqueNameVariable(fullSourceModelPath + "_" + fullTargetModelPath + "_f",
+							val f = declareUniqueNameVariable(fullSourceModelPath + "_" + fullTargetModelPath + "_f",
 								"f")
 
 							newLine
@@ -194,13 +195,13 @@ class MappingXbaseCompiler extends XbaseCompiler {
 							val aliasedBlock = Util.getCurrentAliasedBlockForTargetModelPath(expr)
 							val aliasedSourceModelPath = Util.getFullModelPath(aliasedBlock, true)
 							val aliasedTargetModelPath = Util.getFullModelPath(aliasedBlock, false)
-							val a_m = it.getName(aliasedSourceModelPath + "_" + aliasedTargetModelPath + "_m")
+							val a_m = getName(aliasedSourceModelPath + "_" + aliasedTargetModelPath + "_m")
 							newLine
 							append('''
 								myTargetModel.getFieldPathMap().get(«a_m»[1] + ".«targetFieldPath.expression»").setValue(fieldValue); 
 							''')
 						} else {
-							val m = it.getName(fullSourceModelPath + "_" + fullTargetModelPath + "_m")
+							val m = getName(fullSourceModelPath + "_" + fullTargetModelPath + "_m")
 							newLine
 							append('''
 								myTargetModel.getFieldPathMap().get(«m»[1] + ".«targetFieldPath.expression»").setValue(fieldValue); 
@@ -248,7 +249,7 @@ class MappingXbaseCompiler extends XbaseCompiler {
 					if (Util.isSourceArrayPath(expr)) {
 
 						if (Util.isInFilter(expr)) {
-							val f = it.getName(fullSourceModelPath + "_" + fullTargetModelPath + "_f")
+							val f = getName(fullSourceModelPath + "_" + fullTargetModelPath + "_f")
 							append('''mySourceModel.getFieldPathMap().get(«f» + ".«expr.content»").getValue()''')
 						} else {
 							var String m = null
@@ -275,32 +276,41 @@ class MappingXbaseCompiler extends XbaseCompiler {
 						doInternalToJavaStatement(singleTargetFieldMapping, it, isReferenced)
 					}
 				}
+				Variable: {
+					append('''myVariablesMap.get("«Util.getVariableName(expr.expression)»")''')
+				}
 				XIfExpression: {
 					newLine
-					it.append("if (")
+					append("if (")
 					doInternalToJavaStatement(expr.getIf(), it, isReferenced)
-					it.append(") {").increaseIndentation()
+					append(") {").increaseIndentation()
 					doInternalToJavaStatement(expr.getThen(), it, isReferenced)
-					it.decreaseIndentation().newLine().append("}")
+					decreaseIndentation().newLine().append("}")
 					if (expr.getElse() != null) {
-						it.append(" else {").increaseIndentation()
+						append(" else {").increaseIndentation()
 						doInternalToJavaStatement(expr.getElse(), it, isReferenced)
-						it.decreaseIndentation().newLine().append("}")
+						decreaseIndentation().newLine().append("}")
 					}
 				}
 				XBinaryOperation: {
-					it.append('''(''')
-					doInternalToJavaStatement(expr.leftOperand, it, isReferenced)
-					if (expr.getConcreteSyntaxFeatureName().equals("==")) {
-						append('''.equals(''')
+					val operation = expr.getConcreteSyntaxFeatureName()
+					if (Util.isPredict(operation)) {
+						append('''(com.github.jmodel.mapper.api.ModelHelper.predict(''')
 					} else {
-						append(expr.getConcreteSyntaxFeatureName())
+						append('''(com.github.jmodel.mapper.api.ModelHelper.calc(''')
 					}
-					doInternalToJavaStatement(expr.rightOperand, it, isReferenced)
-					if (expr.getConcreteSyntaxFeatureName().equals("==")) {
+					doInternalToJavaStatement(expr.leftOperand, it, isReferenced)
+					append(''',''')
+					if (operation.equals("in")) {
+						append('''(java.util.List)(''')
+						doInternalToJavaStatement(expr.rightOperand, it, isReferenced)
 						append(''')''')
+					} else {
+						doInternalToJavaStatement(expr.rightOperand, it, isReferenced)
 					}
-					append(''')''')
+					append(''',''')
+					append('''«Util.operEnum(operation)»''')
+					append('''))''')
 				}
 				XStringLiteral: {
 					append('''"«expr.value»"''')
@@ -309,7 +319,8 @@ class MappingXbaseCompiler extends XbaseCompiler {
 					append(expr.value)
 				}
 				XNullLiteral: {
-					append("null")
+					//always be used as comparable value
+					append("(Comparable)null")
 				}
 				XBooleanLiteral: {
 					append('''"«expr.isIsTrue()»"''')

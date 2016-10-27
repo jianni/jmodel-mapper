@@ -32,6 +32,13 @@ Filter:
 	{Filter}
 	':' expression=XOrExpression;
 
+Variable returns xbase::XExpression:
+	{Variable}
+	expression=VariablePath;
+
+VariablePath:
+	'${' ValidID '}';
+
 FieldMapping returns xbase::XBlockExpression:
 	{FieldMapping}
 	expression=(SingleTargetFieldMapping | IfTargetFieldsMapping);
@@ -42,7 +49,7 @@ SingleTargetFieldMapping returns xbase::XExpression:
 
 TargetFieldPath returns xbase::XExpression:
 	{TargetFieldPath}
-	expression=ValidID;
+	expression=ValidID ('(' dataType=DataType ')')?;
 
 SourceFieldPath returns xbase::XExpression:
 	{SourceFieldPath}
@@ -54,7 +61,7 @@ SourceFieldPathXLiteral returns xbase::XExpression:
 
 SingleSourceFieldPath returns xbase::XExpression:
 	{SingleSourceFieldPath}
-	(absolutePath=AbsolutePath)? content=QualifiedName;
+	(absolutePath=AbsolutePath)? content=QualifiedName ('(' dataType=DataType ')')?;
 
 SourceFieldPathXParenthesizedExpression returns xbase::XExpression:
 	{SourceFieldPathXParenthesizedExpression}
@@ -65,7 +72,11 @@ XPrimaryExpression returns xbase::XExpression:
 	XLiteral |
 	XIfExpression |
 	XParenthesizedExpression |
-	SingleSourceFieldPath;
+	SingleSourceFieldPath |
+	Variable;
+
+OpCompare:
+	'>=' | '<' '=' | '>' | '<' | 'in';
 
 IfTargetFieldsMapping returns xbase::XExpression:
 	{IfTargetFieldsMapping}
@@ -91,3 +102,5 @@ SourceFieldPathSetting returns xbase::XBlockExpression:
 enum Format:
 	XML='XML' | JSON='JSON' | BEAN='BEAN';
 
+enum DataType:
+	STR='STR' | INT='INT' | DEC='DEC' | DATE='DATE' | LIST='LIST';

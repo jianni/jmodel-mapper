@@ -2,6 +2,7 @@ package com.github.jmodel.mapper.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Mapping {
 
@@ -18,6 +19,8 @@ public abstract class Mapping {
 	private Model targetTemplateModel;
 
 	private boolean isTemplateReady;
+
+	private List<String> rawVariables = new ArrayList<String>();
 
 	private List<String> rawSourceFieldPaths = new ArrayList<String>();
 
@@ -79,6 +82,14 @@ public abstract class Mapping {
 		this.isTemplateReady = isTemplateReady;
 	}
 
+	public List<String> getRawVariables() {
+		return rawVariables;
+	}
+
+	public void setRawVariables(List<String> rawVariables) {
+		this.rawVariables = rawVariables;
+	}
+
 	public List<String> getRawSourceFieldPaths() {
 		return rawSourceFieldPaths;
 	}
@@ -95,6 +106,7 @@ public abstract class Mapping {
 		this.rawTargetFieldPaths = rawTargetFieldPaths;
 	}
 
-	public abstract void execute(final Model mySourceModel, final Model myTargetModel);
+	public abstract void execute(final Model mySourceModel, final Model myTargetModel,
+			final Map<String, Object> myVariablesMap) throws IllegalException;
 
 }

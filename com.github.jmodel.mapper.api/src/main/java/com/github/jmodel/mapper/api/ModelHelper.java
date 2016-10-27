@@ -107,6 +107,10 @@ public class ModelHelper {
 				myTargetModel.getParentModel().getSubModels().remove(myTargetModel);
 				break;
 			}
+			if (p != null && !p.test(modelPath[0])) {
+				// not pass the condition
+				continue;
+			}
 			if (myTargetModel instanceof Entity) {
 				modelPath[1] = myTargetModel.getModelPath();
 				c.accept((T) modelPath);
@@ -131,6 +135,91 @@ public class ModelHelper {
 				targetEntityModel.setUsed(true);
 				c.accept((T) modelPath);
 			}
+		}
+	}
+
+	public static <T1, T2> String calc(final T1 leftOperant, final T2 rightOperant, final OperationEnum operation) {
+		switch (operation) {
+
+		case PLUS: {
+			if (leftOperant instanceof String || rightOperant instanceof String) {
+				return String.valueOf(leftOperant) + String.valueOf(rightOperant);
+			} else if (leftOperant instanceof Integer && rightOperant instanceof Integer) {
+				return String.valueOf((Integer) leftOperant + (Integer) rightOperant);
+			}
+			return null;
+		}
+		default:
+			return null;
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Boolean predict(final Comparable leftOperant, final Comparable rightOperant,
+			final OperationEnum operation) {
+		if (leftOperant == null || rightOperant == null) {
+			switch (operation) {
+			case EQUALS: {
+				return leftOperant == rightOperant;
+			}
+			case NOTEQUALS: {
+				return leftOperant != rightOperant;
+			}
+			default:
+				return false;
+			}
+		}
+		int compareResult = leftOperant.compareTo(rightOperant);
+		switch (operation) {
+		case EQUALS: {
+			return compareResult == 0 ? true : false;
+		}
+		case NOTEQUALS: {
+			return compareResult != 0 ? true : false;
+		}
+		case GT: {
+			return compareResult > 0 ? true : false;
+		}
+		case GTE: {
+			return (compareResult > 0 || compareResult == 0) ? true : false;
+		}
+		case LT: {
+			return compareResult < 0 ? true : false;
+		}
+		case LTE: {
+			return (compareResult < 0 || compareResult == 0) ? true : false;
+		}
+		default:
+			return false;
+		}
+	}
+
+	public static Boolean predict(final String leftOperant, final List<String> rightOperant,
+			final OperationEnum operation) {
+		switch (operation) {
+		case IN: {
+			return rightOperant.contains(leftOperant);
+		}
+		case NOTIN: {
+			return !rightOperant.contains(leftOperant);
+		}
+		default:
+			return false;
+		}
+
+	}
+
+	public static Boolean predict(final Boolean leftOperant, final Boolean rightOperant,
+			final OperationEnum operation) {
+		switch (operation) {
+		case OR: {
+			return Boolean.logicalOr(leftOperant, rightOperant);
+		}
+		case AND: {
+			return Boolean.logicalAnd(leftOperant, rightOperant);
+		}
+		default:
+			return false;
 		}
 	}
 

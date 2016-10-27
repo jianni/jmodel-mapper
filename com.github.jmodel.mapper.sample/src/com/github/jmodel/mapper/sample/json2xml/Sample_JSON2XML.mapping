@@ -2,15 +2,15 @@ mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML {
 	
 	from: JSON 
 	to: XML  
-	                         
+	                          
 	/**
 	 * From Policy to PolicyEntity
      */    
-	Policy => PolicyEntity {
+	Policy => PolicyEntity { 
 		"PolicyType" => Type;    
 		EffectiveDate => EffDate;  
 		ExpiryDate => ExpDate; 
-		
+		 
 		/**
 		 * From Policy Customer List to Party List
 		 */		
@@ -18,11 +18,11 @@ mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML {
 			IF Customer.PartyType=="20"
 				"1" => ContactType; 
 			ELSEIF Customer.PartyType=="21"
-		    	"2" => ContactType;
+		    	"2" => ContactType; 
 			ELSE
 				Customer.PartyType => ContactType;    	
-			ENDIF  
-		      
+			ENDIF   
+		        
 		    /**
 		 	 * Supplement Contact Info
 		     */
@@ -38,7 +38,7 @@ mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML {
 				:IsPrimaryAddress=="Y"
 				(Country + ";" + Province + ";" + City + ";" + AddressLine1 + ";" + AddressLine1) => ContactAddress;			
 			};	 
-		};	  
+		};	   
 		             
 		/**
 		 * Append Sales Channel Info to Party List
@@ -85,7 +85,7 @@ mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML {
 	 	 	 * Construct Policy Limit Info
          	 */ 
 			. => PolicyLimit { 
-				:SumInsured != null || SumInsured == ""     
+				:SumInsured == null      
 				"PolicyLimitType" => Type;           
 				
 				/**

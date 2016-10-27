@@ -13,6 +13,36 @@ import com.github.jmodel.mapper.plugin.mappingLanguage.Body
 
 class Util {
 
+	def static boolean isPredict(String oper) {
+		if (oper.equals("==") || oper.equals("!=") || oper.equals(">") || oper.equals(">=") || oper.equals("<") ||
+			oper.equals("<=") || oper.equals("in") || oper.equals("!in") || oper.equals("||") || oper.equals("&&")) {
+			return true
+		} else {
+			return false
+		}
+	}
+
+	def static String operEnum(String oper) {
+		switch oper {
+			case "==": "com.github.jmodel.mapper.api.OperationEnum.EQUALS"
+			case "!=": "com.github.jmodel.mapper.api.OperationEnum.NOTEQUALS"
+			case ">": "com.github.jmodel.mapper.api.OperationEnum.GT"
+			case ">=": "com.github.jmodel.mapper.api.OperationEnum.GTE"
+			case "<": "com.github.jmodel.mapper.api.OperationEnum.LT"
+			case "<=": "com.github.jmodel.mapper.api.OperationEnum.LTE"
+			case "in": "com.github.jmodel.mapper.api.OperationEnum.IN"
+			case "!in": "com.github.jmodel.mapper.api.OperationEnum.NOTIN"
+			case "||": "com.github.jmodel.mapper.api.OperationEnum.OR"
+			case "&&": "com.github.jmodel.mapper.api.OperationEnum.AND"
+			case "+": "com.github.jmodel.mapper.api.OperationEnum.PLUS"
+			default: "The operation is not supported"
+		}
+	}
+
+	def static String getVariableName(String variableDeclaration) {
+		variableDeclaration.substring(2, variableDeclaration.length - 1)
+	}
+
 	def static boolean isDot(String x) {
 		if (x.equals(".")) {
 			true
