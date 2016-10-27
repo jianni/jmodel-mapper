@@ -39,8 +39,7 @@ public abstract class AbstractConvertEngine {
 
 	protected static String NAME_PATTERN = "([a-zA-Z_][a-zA-Z\\d_]*\\.)*[a-zA-Z_][a-zA-Z\\d_]*";
 
-	protected <T> Object getResult(T sourceObj, String mappingURI, Map<String, Object> argsMap, Locale currentLocale)
-			throws IllegalException {
+	protected <T> Object getResult(T sourceObj, String mappingURI, Map<String, Object> argsMap, Locale currentLocale) {
 
 		messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle", currentLocale);
 
@@ -96,7 +95,7 @@ public abstract class AbstractConvertEngine {
 		Model sourceModel = analyzer.process(sourceTemplateModel.clone(), sourceObj);
 		Model targetModel = targetTemplateModel.clone();
 		fillTargetInstance(targetModel, new HashMap<String, Field>(), new HashMap<String, Model>());
-		mapping.execute(sourceModel, targetModel, argsMap);
+		mapping.execute(sourceModel, targetModel, argsMap, currentLocale);
 		cleanUnusedField(targetModel);
 
 		Builder<?> builder = getBuilderFactory().createBuilder(mapping.getToFormat());

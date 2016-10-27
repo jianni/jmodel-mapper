@@ -14,7 +14,7 @@ import com.github.jmodel.mapper.impl.AbstractAnalyzer;
 public class BeanAnalyzer extends AbstractAnalyzer<Object> {
 
 	@Override
-	public <T> Model process(Model sourceModel, T sourceObject) throws IllegalException {
+	public <T> Model process(Model sourceModel, T sourceObject) {
 		populateModel(sourceModel, new HashMap<String, Field>(), new HashMap<String, Model>(), sourceObject);
 		return sourceModel;
 	}

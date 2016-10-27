@@ -2,6 +2,7 @@ package com.github.jmodel.mapper.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public abstract class Mapping {
@@ -107,6 +108,6 @@ public abstract class Mapping {
 	}
 
 	public abstract void execute(final Model mySourceModel, final Model myTargetModel,
-			final Map<String, Object> myVariablesMap) throws IllegalException;
+			final Map<String, Object> myVariablesMap, final Locale currentLocale);
 
 }

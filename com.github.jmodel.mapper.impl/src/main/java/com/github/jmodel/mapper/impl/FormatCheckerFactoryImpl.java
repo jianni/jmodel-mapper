@@ -10,7 +10,7 @@ import com.github.jmodel.mapper.impl.formats.XmlFormatChecker;
 
 public class FormatCheckerFactoryImpl implements FormatCheckerFactory {
 
-	public FormatChecker createFormatChecker(FormatEnum format) throws IllegalException {
+	public FormatChecker createFormatChecker(FormatEnum format) {
 		switch (format) {
 		case JSON:
 			return new JsonFormatChecker();

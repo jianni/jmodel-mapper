@@ -7,7 +7,7 @@ import com.github.jmodel.mapper.api.IllegalException;
 
 public class BuilderFactoryStringImpl implements BuilderFactory<String> {
 
-	public Builder<String> createBuilder(FormatEnum toFormat) throws IllegalException {
+	public Builder<String> createBuilder(FormatEnum toFormat) {
 		switch (toFormat) {
 		case JSON:
 			return new JsonStringBuilder();

@@ -138,12 +138,10 @@ class MappingXbaseCompiler extends XbaseCompiler {
 								"f")
 
 							newLine
-							append('''«p» = (String «f») -> ''')
-
+							append('''«p» = (String «f») -> (''')
 							doInternalToJavaStatement(expr.filter.expression, it,
 								isReferenced)
-
-							append(''';''')
+							append(''');''')
 						}
 
 						newLine
@@ -309,7 +307,7 @@ class MappingXbaseCompiler extends XbaseCompiler {
 						doInternalToJavaStatement(expr.rightOperand, it, isReferenced)
 					}
 					append(''',''')
-					append('''«Util.operEnum(operation)»''')
+					append('''«Util.operEnum(operation)», currentLocale''')
 					append('''))''')
 				}
 				XStringLiteral: {

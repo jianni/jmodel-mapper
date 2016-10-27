@@ -8,7 +8,7 @@ import com.github.jmodel.mapper.api.IllegalException;
 
 public class BuilderFactoryJsonNodeImpl implements BuilderFactory<JsonNode> {
 
-	public Builder<JsonNode> createBuilder(FormatEnum toFormat) throws IllegalException {
+	public Builder<JsonNode> createBuilder(FormatEnum toFormat) {
 		switch (toFormat) {
 		case JSON:
 			return new JsonNodeBuilder();

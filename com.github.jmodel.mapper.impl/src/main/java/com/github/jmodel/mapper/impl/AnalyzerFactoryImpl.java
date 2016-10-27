@@ -10,7 +10,7 @@ import com.github.jmodel.mapper.impl.analyzers.XmlAnalyzer;
 
 public class AnalyzerFactoryImpl implements AnalyzerFactory {
 
-	public Analyzer createAnalyzer(FormatEnum fromFormat) throws IllegalException {
+	public Analyzer createAnalyzer(FormatEnum fromFormat) {
 		switch (fromFormat) {
 		case JSON:
 			return new JsonAnalyzer();

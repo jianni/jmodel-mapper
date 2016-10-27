@@ -1,6 +1,6 @@
 package com.github.jmodel.mapper.api;
 
-public class IllegalException extends Exception {
+public class IllegalException extends RuntimeException {
 
 	private static final long serialVersionUID = 5049750180833027559L;
 

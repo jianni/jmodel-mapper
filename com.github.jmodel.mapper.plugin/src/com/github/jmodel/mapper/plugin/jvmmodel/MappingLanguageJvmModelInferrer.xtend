@@ -13,7 +13,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import java.util.Map
 import com.github.jmodel.mapper.plugin.mappingLanguage.Variable
-import com.github.jmodel.mapper.api.IllegalException
+import java.util.Locale
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -94,8 +94,8 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 				parameters += element.toParameter("mySourceModel", typeRef(Model))
 				parameters += element.toParameter("myTargetModel", typeRef(Model))
 				parameters += element.toParameter("myVariablesMap", typeRef(Map))
+				parameters += element.toParameter("currentLocale", typeRef(Locale))
 				annotations += annotationRef("java.lang.Override")
-				exceptions += typeRef(IllegalException)
 				body = element.body
 			]
 

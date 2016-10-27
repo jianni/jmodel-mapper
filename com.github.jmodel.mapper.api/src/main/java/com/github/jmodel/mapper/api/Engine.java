@@ -5,13 +5,12 @@ import java.util.Map;
 
 public interface Engine<R> {
 
-	public <T> R convert(T sourceObj, String mappingURI) throws IllegalException;
+	public <T> R convert(T sourceObj, String mappingURI);
 
-	public <T> R convert(T sourceObj, String mappingURI, Map<String, Object> argsMap) throws IllegalException;
+	public <T> R convert(T sourceObj, String mappingURI, Map<String, Object> argsMap);
 
-	public <T> R convert(T sourceObj, String mappingURI, Locale currentLocale) throws IllegalException;
+	public <T> R convert(T sourceObj, String mappingURI, Locale currentLocale);
 
-	public <T> R convert(T sourceObj, String mappingURI, Map<String, Object> argsMap, Locale currentLocale)
-			throws IllegalException;
+	public <T> R convert(T sourceObj, String mappingURI, Map<String, Object> argsMap, Locale currentLocale);
 
 }

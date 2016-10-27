@@ -23,7 +23,7 @@ import com.github.jmodel.mapper.impl.AbstractAnalyzer;
 
 public class XmlAnalyzer extends AbstractAnalyzer<Element> {
 
-	public <T> Model process(Model sourceModel, T sourceObject) throws IllegalException {
+	public <T> Model process(Model sourceModel, T sourceObject) {
 		try {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = builderFactory.newDocumentBuilder();
@@ -81,9 +81,10 @@ public class XmlAnalyzer extends AbstractAnalyzer<Element> {
 					clonedSubSubModel = subSubModel.clone();
 					subModel.getSubModels().add(clonedSubSubModel);
 				}
-				clonedSubSubModel.setModelPath(subModel.getModelPath() + "." + clonedSubSubModel.getName() + "[" + k + "]");
+				clonedSubSubModel
+						.setModelPath(subModel.getModelPath() + "." + clonedSubSubModel.getName() + "[" + k + "]");
 				clonedSubSubModel.setFieldPathMap(subModel.getFieldPathMap());
-				
+
 				populateModel(clonedSubSubModel, subModel.getFieldPathMap(), subModel.getModelPathMap(),
 						(Element) subSubNode);
 

@@ -13,7 +13,7 @@ import com.github.jmodel.mapper.impl.AbstractAnalyzer;
 
 public class JsonAnalyzer extends AbstractAnalyzer<JsonNode> {
 
-	public <T> Model process(Model sourceModel, T sourceObject) throws IllegalException {
+	public <T> Model process(Model sourceModel, T sourceObject)  {
 		JsonNode jsonNode;
 		if (sourceObject instanceof JsonNode) {
 			jsonNode = (JsonNode) sourceObject;
