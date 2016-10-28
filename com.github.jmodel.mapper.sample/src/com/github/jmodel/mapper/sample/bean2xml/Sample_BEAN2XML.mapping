@@ -4,17 +4,17 @@ mapping com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML {
 	to: XML 
 	       
 	Entity => MyField {		
-		Name (INT) => XXX (STR); 
+		Name => XXX; 
 		Fields[] => YYY[] {   
-			:Name in ${varName}      
+			:Name in ${varName}        
 			(Name + Name) => HHH;
-		};		
+		};		    
 	}; 
-}
+} 
+    
+    
 
+ 
 
-
-
-
-
+ 
 

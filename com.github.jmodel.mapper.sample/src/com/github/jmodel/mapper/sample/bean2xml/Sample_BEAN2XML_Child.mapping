@@ -1,0 +1,12 @@
+mapping com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML_Child extends com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML {
+	
+	from: BEAN 
+	to: XML
+	
+	Entity => MyField {		
+		. => YYY[] {
+			Name => HHH;	
+		};       
+	};  
+	 
+}    

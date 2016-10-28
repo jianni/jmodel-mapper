@@ -80,14 +80,26 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 					append('''
 						if (instance == null) {
 							instance = new «element.name»();
-							«element.genCommonSetting»
-							«element.genOriginalPaths»
+							
+							instance.init(instance);
 						}	
 						
 						return instance;
 					''')
 				]
 
+			]
+
+			members += element.toMethod("init", typeRef(void)) [
+				parameters += element.toParameter("myInstance", typeRef(com.github.jmodel.mapper.api.Mapping))
+				annotations += annotationRef("java.lang.Override")
+				body = [
+					append('''
+						super.init(myInstance);
+						«element.genCommonSetting»
+						«element.genOriginalPaths»
+					''')
+				]
 			]
 
 			members += element.toMethod("execute", typeRef(void)) [
@@ -104,50 +116,49 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 
 	def genCommonSetting(Mapping element) '''
 		«IF element.from.name.literal== 'JSON'»								
-			instance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.JSON);														
+			myInstance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.JSON);														
 		«ELSEIF element.from.name.literal== 'XML'» 
-			instance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.XML);	
+			myInstance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.XML);	
 		«ELSEIF element.from.name.literal== 'BEAN'» 
-			instance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.BEAN);	
+			myInstance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.BEAN);	
 		«ENDIF»
 		
 		«IF element.to.name.literal== 'JSON'»								
-			instance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.JSON);														
+			myInstance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.JSON);														
 		«ELSEIF element.to.name.literal== 'XML'» 
-			instance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.XML);	
+			myInstance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.XML);	
 		«ELSEIF element.to.name.literal== 'BEAN'» 
-			instance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.BEAN);	
+			myInstance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.BEAN);	
 		«ENDIF»	
 		
 		com.github.jmodel.mapper.api.Entity sourceRootModel = new com.github.jmodel.mapper.impl.EntityImpl();
-		instance.setSourceTemplateModel(sourceRootModel);
+		myInstance.setSourceTemplateModel(sourceRootModel);
 		com.github.jmodel.mapper.api.Entity targetRootModel = new com.github.jmodel.mapper.impl.EntityImpl();
-		instance.setTargetTemplateModel(targetRootModel); 	
+		myInstance.setTargetTemplateModel(targetRootModel); 	
 					
 	'''
 
-	def genOriginalPaths(
-		Mapping element) '''
+	def genOriginalPaths(Mapping element) '''
 			
 			«FOR variable : element.eAllContents.toIterable.filter(typeof(Variable))»
-				instance.getRawVariables().add("«Util.getVariableName(variable.expression)»");
+			myInstance.getRawVariables().add("«Util.getVariableName(variable.expression)»");
 			«ENDFOR»
 						
 			«FOR block : element.eAllContents.toIterable.filter(typeof(Block))»
-				instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(block, true)»._");
-				instance.getRawTargetFieldPaths().add("«Util.getFullModelPath(block, false)»._");
+				myInstance.getRawSourceFieldPaths().add("«Util.getFullModelPath(block, true)»._");
+				myInstance.getRawTargetFieldPaths().add("«Util.getFullModelPath(block, false)»._");
 			«ENDFOR»
 		
-		    «FOR field:element.eAllContents.toIterable.filter(typeof(SingleSourceFieldPath))»
+		    «FOR field : element.eAllContents.toIterable.filter(typeof(SingleSourceFieldPath))»
 		    	«IF field.absolutePath!=null»
-		    		instance.getRawSourceFieldPaths().add("«Util.getSourceModelPathByPath(field)».«field.content»");
+		    		myInstance.getRawSourceFieldPaths().add("«Util.getSourceModelPathByPath(field)».«field.content»");
 		    	«ELSE»
-		    		instance.getRawSourceFieldPaths().add("«Util.getFullModelPath(field, true)».«field.content»");
+		    		myInstance.getRawSourceFieldPaths().add("«Util.getFullModelPath(field, true)».«field.content»");
 		    	«ENDIF»		
 		    «ENDFOR»		
 			
 			«FOR targetFieldPath : element.eAllContents.toIterable.filter(typeof(TargetFieldPath))»
-				instance.getRawTargetFieldPaths().add("«Util.getFullModelPath(targetFieldPath, false)».«targetFieldPath.expression»");												
+				myInstance.getRawTargetFieldPaths().add("«Util.getFullModelPath(targetFieldPath, false)».«targetFieldPath.expression»");												
 			«ENDFOR»
 	'''
 }

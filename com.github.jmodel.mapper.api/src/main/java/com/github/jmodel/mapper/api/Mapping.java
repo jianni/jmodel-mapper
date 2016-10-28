@@ -107,7 +107,12 @@ public abstract class Mapping {
 		this.rawTargetFieldPaths = rawTargetFieldPaths;
 	}
 
-	public abstract void execute(final Model mySourceModel, final Model myTargetModel,
-			final Map<String, Object> myVariablesMap, final Locale currentLocale);
+	public void execute(final Model mySourceModel, final Model myTargetModel, final Map<String, Object> myVariablesMap,
+			final Locale currentLocale) {
 
+	}
+
+	public void init(final Mapping myInstance) {
+
+	}
 }

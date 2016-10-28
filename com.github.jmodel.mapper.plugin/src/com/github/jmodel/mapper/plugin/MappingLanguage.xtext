@@ -4,7 +4,7 @@ generate mappingLanguage "http://www.github.com/jianni/jmodel-mapper/MappingLang
 import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
 
 Mapping:
-	'mapping' name=QualifiedName ('extends' superType=[Mapping])? '{' from=From to=To body=Body '}';
+	'mapping' name=QualifiedName ('extends' superType=[Mapping|QualifiedName])? '{' from=From to=To body=Body '}';
 
 From:
 	'from:' name=Format;

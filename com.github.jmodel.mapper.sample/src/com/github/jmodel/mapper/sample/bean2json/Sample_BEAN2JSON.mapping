@@ -9,11 +9,12 @@ mapping com.github.jmodel.mapper.sample.bean2json.Sample_BEAN2JSON {
 			Name => HHH; 
 		};		
 	};
-}
+} 
 
 
 
 
 
 
-
+ 
+ 

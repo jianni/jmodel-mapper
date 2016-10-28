@@ -39,6 +39,9 @@ class MappingXbaseCompiler extends XbaseCompiler {
 	override protected doInternalToJavaStatement(XExpression expr, ITreeAppendable it, boolean isReferenced) {
 		switch expr {
 			Body: {
+				newLine
+				append('''super.execute(mySourceModel, myTargetModel, myVariablesMap, currentLocale);''')
+				
 				for (block : expr.blocks) {
 					doInternalToJavaStatement(block, it, isReferenced)
 				}

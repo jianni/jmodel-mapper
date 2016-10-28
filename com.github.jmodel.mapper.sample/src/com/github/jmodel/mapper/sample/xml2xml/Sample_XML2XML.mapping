@@ -2,7 +2,7 @@ mapping com.github.jmodel.mapper.sample.xml2xml.Sample_XML2XML {
 	
 	from: XML
 	to: XML 
-	      
+	       
 	PolicyEntity => Policy {		
 		Type => XType; 
 		
@@ -11,7 +11,7 @@ mapping com.github.jmodel.mapper.sample.xml2xml.Sample_XML2XML {
 		};
 				
 	};
-}
+}  
  
 
 
@@ -19,3 +19,4 @@ mapping com.github.jmodel.mapper.sample.xml2xml.Sample_XML2XML {
 
 
 
+ 

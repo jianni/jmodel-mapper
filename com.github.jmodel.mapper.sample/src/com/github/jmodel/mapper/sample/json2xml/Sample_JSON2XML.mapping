@@ -1,8 +1,8 @@
 mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML { 
 	
 	from: JSON 
-	to: XML  
-	                          
+	to: XML    
+	                           
 	/**
 	 * From Policy to PolicyEntity
      */    

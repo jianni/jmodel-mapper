@@ -10,6 +10,9 @@ import org.eclipse.jdt.core.IJavaProject
 import org.eclipse.jdt.core.JavaCore
 import org.eclipse.jdt.core.IPackageFragmentRoot
 import org.eclipse.jdt.core.JavaModelException
+import org.eclipse.xtext.xbase.XBinaryOperation
+import org.eclipse.xtext.xbase.XNullLiteral
+import com.github.jmodel.mapper.plugin.mappingLanguage.Body
 
 /**
  * Custom validation rules. 
@@ -20,6 +23,9 @@ class MappingLanguageValidator extends AbstractMappingLanguageValidator {
 
 	@Check
 	def checkBlock(Block block) {
+		/*
+		 * model path can't include two arrays
+		 */
 		var firstPosition = block.sourceModelPath.indexOf('[')
 		if (firstPosition > 0 && firstPosition != block.sourceModelPath.lastIndexOf('[')) {
 			error('Two array models is not allowed in a mapping block', block, null)
@@ -28,10 +34,42 @@ class MappingLanguageValidator extends AbstractMappingLanguageValidator {
 		if (firstPosition > 0 && firstPosition != block.targetModelPath.lastIndexOf('[')) {
 			error('Two array models is not allowed in a mapping block', block, null)
 		}
+
+		/*
+		 * check if model path deviates from model path of parent
+		 */
+//		val currentMapping = Util.getBody(block).eContainer as Mapping
+//		val superType = currentMapping.superType
+//		val tIter = superType.eAllContents.toIterable.filter(typeof(Block)).filter(f|(!f.targetModelPath.equals('.'))).
+//			filter(
+//				s |
+//					(
+//						(Util.getFullModelPath(s, false).equals(block.targetModelPath + "[]").operator_or(s.
+//							targetModelPath.substring(0, s.targetModelPath.length - 2).equals(
+//								Util.getFullModelPath(block, false)))))
+//			)
+//		if (tIter.iterator.hasNext) {
+//			error('The model path "' + block.targetModelPath + '" deviates from the model path in parent mapping',
+//				block, null)
+//		}
+
+		/*
+		 * check incorrect dot path
+		 */
+		if (block.eContainer instanceof Body) {
+			if (block.sourceModelPath.equals('.').operator_or(block.targetModelPath.equals('.'))) {
+				error('xxx', block, null)
+			}
+		}
+
 	}
 
 	@Check
 	def checkMapping(Mapping mapping) {
+
+		/*
+		 * check name space
+		 */
 		val platformString = mapping.eResource.URI.toPlatformString(true)
 		val myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString))
 		val proj = myFile.getProject()
@@ -63,10 +101,17 @@ class MappingLanguageValidator extends AbstractMappingLanguageValidator {
 		}
 	}
 
-//		mapping.name
-//		mapping.eResource.getURI
-//		error('The declared mapping does not match the expected mapping', mapping, null)
-//		The declared mapping "com.github.jmodel.mapper.sample1" does not match the expected package "com.github.jmodel.mapper.sample"
+	@Check
+	def checkMapping(XBinaryOperation binaryOperation) {
+		if (binaryOperation.leftOperand instanceof XNullLiteral ||
+			binaryOperation.rightOperand instanceof XNullLiteral) {
+			val oper = binaryOperation.getConcreteSyntaxFeatureName()
+			if (!oper.equals("==") && !oper.equals("!=")) {
+				error('The operation "' + oper + '" is not support for null', binaryOperation, null)
+			}
+		}
+	}
+
 	/**
 	 * important! for ignoring the built-in validation, need to override this method
 	 */

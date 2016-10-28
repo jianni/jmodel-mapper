@@ -32,7 +32,7 @@ public class Sample_BEAN2XML_Client {
 		
 		argsMap.put("varName", varNames);
 		try {
-			String output = convertEngine.convert(entity, "com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML",
+			String output = convertEngine.convert(entity, "com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML_Child",
 					argsMap);
 			System.out.println(output);
 		} catch (IllegalException e) {
