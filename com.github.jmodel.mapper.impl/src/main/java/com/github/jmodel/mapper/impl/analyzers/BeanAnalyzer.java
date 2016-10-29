@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.jmodel.mapper.api.Field;
-import com.github.jmodel.mapper.api.IllegalException;
 import com.github.jmodel.mapper.api.Model;
 import com.github.jmodel.mapper.impl.AbstractAnalyzer;
 

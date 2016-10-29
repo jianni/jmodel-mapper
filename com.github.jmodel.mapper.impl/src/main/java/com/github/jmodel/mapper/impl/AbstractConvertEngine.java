@@ -12,28 +12,21 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.jmodel.mapper.api.Analyzer;
-import com.github.jmodel.mapper.api.AnalyzerFactory;
+import com.github.jmodel.mapper.api.AnalyzerFactoryService;
 import com.github.jmodel.mapper.api.Array;
 import com.github.jmodel.mapper.api.Builder;
-import com.github.jmodel.mapper.api.BuilderFactory;
 import com.github.jmodel.mapper.api.Entity;
 import com.github.jmodel.mapper.api.Field;
 import com.github.jmodel.mapper.api.FormatChecker;
-import com.github.jmodel.mapper.api.FormatCheckerFactory;
+import com.github.jmodel.mapper.api.FormatCheckerFactoryService;
+import com.github.jmodel.mapper.api.FormatEnum;
 import com.github.jmodel.mapper.api.IllegalException;
 import com.github.jmodel.mapper.api.Mapping;
 import com.github.jmodel.mapper.api.Model;
-import com.github.jmodel.mapper.impl.builders.BuilderFactoryStringImpl;
 
 public abstract class AbstractConvertEngine {
 
 	protected ResourceBundle messages;
-
-	protected FormatCheckerFactory formatCheckerFactory = new FormatCheckerFactoryImpl();
-
-	protected AnalyzerFactory analyzerFactory = new AnalyzerFactoryImpl();
-
-	protected BuilderFactory<String> builderFactory = new BuilderFactoryStringImpl();
 
 	protected static String DEFAULT_PACKAGE_NAME = "com.github.jmodel.mapper";
 
@@ -77,7 +70,8 @@ public abstract class AbstractConvertEngine {
 			}
 		}
 
-		FormatChecker formatChecker = formatCheckerFactory.createFormatChecker(mapping.getFromFormat());
+		FormatChecker formatChecker = FormatCheckerFactoryService.getInstance()
+				.getFormatChecker(mapping.getFromFormat());
 		if (!formatChecker.isValid(sourceObj)) {
 			throw new IllegalException(String.format(currentLocale, messages.getString("SRC_FMT_NOT_SUPPORT"),
 					sourceObj.getClass().getName(), mapping.getFromFormat()));
@@ -90,15 +84,15 @@ public abstract class AbstractConvertEngine {
 			populateModel(targetTemplateModel, mapping.getRawTargetFieldPaths());
 			mapping.setTemplateReady(true);
 		}
-
-		Analyzer analyzer = analyzerFactory.createAnalyzer(mapping.getFromFormat());
+		AnalyzerFactoryService analyzerFactoryService = AnalyzerFactoryService.getInstance();
+		Analyzer analyzer = analyzerFactoryService.getAnalyzer(mapping.getFromFormat(), null);
 		Model sourceModel = analyzer.process(sourceTemplateModel.clone(), sourceObj);
 		Model targetModel = targetTemplateModel.clone();
 		fillTargetInstance(targetModel, new HashMap<String, Field>(), new HashMap<String, Model>());
 		mapping.execute(sourceModel, targetModel, argsMap, currentLocale);
 		cleanUnusedField(targetModel);
 
-		Builder<?> builder = getBuilderFactory().createBuilder(mapping.getToFormat());
+		Builder<?> builder = getBuilder(mapping.getToFormat());
 
 		return builder.process(targetModel);
 	}
@@ -268,10 +262,8 @@ public abstract class AbstractConvertEngine {
 					fieldList.add(currentField);
 				}
 			}
-
 		}
 	}
 
-	protected abstract BuilderFactory<?> getBuilderFactory();
-
+	protected abstract Builder<?> getBuilder(FormatEnum toFormat);
 }

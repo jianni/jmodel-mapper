@@ -2,7 +2,7 @@ mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML {
 	
 	from: JSON 
 	to: XML    
-	                           
+	                            
 	/**
 	 * From Policy to PolicyEntity
      */    
@@ -10,7 +10,7 @@ mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML {
 		"PolicyType" => Type;    
 		EffectiveDate => EffDate;  
 		ExpiryDate => ExpDate; 
-		 
+		  
 		/**
 		 * From Policy Customer List to Party List
 		 */		

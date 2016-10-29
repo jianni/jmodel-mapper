@@ -3,11 +3,11 @@ package com.github.jmodel.mapper.impl.engines;
 import java.util.Locale;
 import java.util.Map;
 
-import com.github.jmodel.mapper.api.BuilderFactory;
+import com.github.jmodel.mapper.api.Builder;
+import com.github.jmodel.mapper.api.BuilderFactoryService;
 import com.github.jmodel.mapper.api.Engine;
-import com.github.jmodel.mapper.api.IllegalException;
+import com.github.jmodel.mapper.api.FormatEnum;
 import com.github.jmodel.mapper.impl.AbstractConvertEngine;
-import com.github.jmodel.mapper.impl.builders.BuilderFactoryStringImpl;
 
 public class ConvertToStringEngine extends AbstractConvertEngine implements Engine<String> {
 
@@ -30,8 +30,8 @@ public class ConvertToStringEngine extends AbstractConvertEngine implements Engi
 	}
 
 	@Override
-	protected BuilderFactory<String> getBuilderFactory() {
-		return new BuilderFactoryStringImpl();
+	protected Builder<String> getBuilder(FormatEnum toFormat) {
+		return BuilderFactoryService.getInstance().getBuilder(toFormat, String.class);
 	}
 
 }

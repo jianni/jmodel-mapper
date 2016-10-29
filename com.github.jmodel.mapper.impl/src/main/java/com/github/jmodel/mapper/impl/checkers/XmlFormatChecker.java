@@ -1,4 +1,4 @@
-package com.github.jmodel.mapper.impl.formats;
+package com.github.jmodel.mapper.impl.checkers;
 
 import java.io.InputStream;
 

@@ -4,11 +4,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jmodel.mapper.api.BuilderFactory;
+import com.github.jmodel.mapper.api.Builder;
+import com.github.jmodel.mapper.api.BuilderFactoryService;
 import com.github.jmodel.mapper.api.Engine;
-import com.github.jmodel.mapper.api.IllegalException;
+import com.github.jmodel.mapper.api.FormatEnum;
 import com.github.jmodel.mapper.impl.AbstractConvertEngine;
-import com.github.jmodel.mapper.impl.builders.BuilderFactoryJsonNodeImpl;
 
 public class ConvertToJsonNodeEngine extends AbstractConvertEngine implements Engine<JsonNode> {
 
@@ -31,8 +31,7 @@ public class ConvertToJsonNodeEngine extends AbstractConvertEngine implements En
 	}
 
 	@Override
-	protected BuilderFactory<JsonNode> getBuilderFactory() {
-		return new BuilderFactoryJsonNodeImpl();
+	protected Builder<JsonNode> getBuilder(FormatEnum toFormat) {
+		return BuilderFactoryService.getInstance().getBuilder(toFormat, JsonNode.class);
 	}
-
 }
