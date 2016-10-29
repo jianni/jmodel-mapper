@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.jmodel.mapper.api.Engine;
+import com.github.jmodel.mapper.api.EngineFactoryService;
 import com.github.jmodel.mapper.api.Entity;
 import com.github.jmodel.mapper.api.Field;
 import com.github.jmodel.mapper.api.IllegalException;
-import com.github.jmodel.mapper.impl.EngineFactoryImpl;
 import com.github.jmodel.mapper.impl.EntityImpl;
 import com.github.jmodel.mapper.impl.FieldImpl;
 
@@ -25,7 +25,7 @@ public class Sample_BEAN2XML_Client {
 		field.setName("hello field name");
 
 		// bean2json usage
-		Engine<String> convertEngine = EngineFactoryImpl.instance.createEngine(String.class);
+		Engine<String> convertEngine = EngineFactoryService.getInstance().getEngine(String.class);
 		Map<String, Object> argsMap = new HashMap<String, Object>();
 		List<String> varNames = new ArrayList<String>();
 		varNames.add("hello field name1");
