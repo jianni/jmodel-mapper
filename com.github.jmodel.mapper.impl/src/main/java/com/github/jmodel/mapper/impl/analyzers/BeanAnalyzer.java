@@ -3,18 +3,20 @@ package com.github.jmodel.mapper.impl.analyzers;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.jmodel.mapper.api.Field;
+import com.github.jmodel.mapper.api.ModeEnum;
 import com.github.jmodel.mapper.api.Model;
 import com.github.jmodel.mapper.impl.AbstractAnalyzer;
 
 public class BeanAnalyzer extends AbstractAnalyzer<Object> {
 
 	@Override
-	public <T> Model process(Model sourceModel, T sourceObject) {
-		populateModel(sourceModel, new HashMap<String, Field>(), new HashMap<String, Model>(), sourceObject);
+	public <T> Model process(ModeEnum mode, Model sourceModel, T sourceObject) {
+		populateInstance(mode, sourceModel, new HashMap<String, Field>(), new HashMap<String, Model>(), sourceObject);
 		return sourceModel;
 	}
 
@@ -57,11 +59,19 @@ public class BeanAnalyzer extends AbstractAnalyzer<Object> {
 						.setModelPath(subModel.getModelPath() + "." + clonedSubSubModel.getName() + "[" + i + "]");
 				clonedSubSubModel.setFieldPathMap(subModel.getFieldPathMap());
 
-				populateModel(clonedSubSubModel, subModel.getFieldPathMap(), subModel.getModelPathMap(),
+				populateInstanceManually(clonedSubSubModel, subModel.getFieldPathMap(), subModel.getModelPathMap(),
 						subSubJsonNode);
 			}
 		}
 
+	}
+
+
+	@Override
+	protected void populateInstanceAutomatically(Model sourceModel, Map<String, Field> fieldPathMap,
+			Map<String, Model> modelPathMap, String nodeName, Object node) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

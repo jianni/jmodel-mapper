@@ -3,6 +3,7 @@ package com.github.jmodel.mapper.impl.analyzers;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,12 +19,13 @@ import org.w3c.dom.NodeList;
 
 import com.github.jmodel.mapper.api.Field;
 import com.github.jmodel.mapper.api.IllegalException;
+import com.github.jmodel.mapper.api.ModeEnum;
 import com.github.jmodel.mapper.api.Model;
 import com.github.jmodel.mapper.impl.AbstractAnalyzer;
 
 public class XmlAnalyzer extends AbstractAnalyzer<Element> {
 
-	public <T> Model process(Model sourceModel, T sourceObject) {
+	public <T> Model process(ModeEnum mode, Model sourceModel, T sourceObject) {
 		try {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = builderFactory.newDocumentBuilder();
@@ -35,7 +37,7 @@ public class XmlAnalyzer extends AbstractAnalyzer<Element> {
 			} else {
 				throw new IllegalException("xxxx");
 			}
-			populateModel(sourceModel, new HashMap<String, Field>(), new HashMap<String, Model>(),
+			populateInstance(mode, sourceModel, new HashMap<String, Field>(), new HashMap<String, Model>(),
 					document.getDocumentElement());
 			return sourceModel;
 		} catch (Exception e) {
@@ -85,12 +87,19 @@ public class XmlAnalyzer extends AbstractAnalyzer<Element> {
 						.setModelPath(subModel.getModelPath() + "." + clonedSubSubModel.getName() + "[" + k + "]");
 				clonedSubSubModel.setFieldPathMap(subModel.getFieldPathMap());
 
-				populateModel(clonedSubSubModel, subModel.getFieldPathMap(), subModel.getModelPathMap(),
+				populateInstanceManually(clonedSubSubModel, subModel.getFieldPathMap(), subModel.getModelPathMap(),
 						(Element) subSubNode);
 
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected void populateInstanceAutomatically(Model sourceModel, Map<String, Field> fieldPathMap,
+			Map<String, Model> modelPathMap, String nodeName, Element node) {
+		// TODO Auto-generated method stub
+
 	}
 }

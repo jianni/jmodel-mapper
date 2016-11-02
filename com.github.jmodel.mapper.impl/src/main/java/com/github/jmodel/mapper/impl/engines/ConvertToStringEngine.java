@@ -34,4 +34,14 @@ public class ConvertToStringEngine extends AbstractConvertEngine implements Engi
 		return BuilderFactoryService.getInstance().getBuilder(toFormat, String.class);
 	}
 
+	@Override
+	public <T> String autoConvert(T sourceObj, FormatEnum fromFormat, FormatEnum toFormat) {
+		return autoConvert(sourceObj, fromFormat, toFormat, Locale.getDefault());
+	}
+
+	@Override
+	public <T> String autoConvert(T sourceObj, FormatEnum fromFormat, FormatEnum toFormat, Locale currentLocale) {
+		return (String) super.getResult(sourceObj, fromFormat, toFormat, currentLocale);
+	}
+
 }

@@ -13,4 +13,8 @@ public interface Engine<R> {
 
 	public <T> R convert(T sourceObj, String mappingURI, Map<String, Object> argsMap, Locale currentLocale);
 
+	public <T> R autoConvert(T sourceObj, FormatEnum fromFormat, FormatEnum toFormat);
+
+	public <T> R autoConvert(T sourceObj, FormatEnum fromFormat, FormatEnum toFormat, Locale currentLocale);
+
 }

@@ -34,4 +34,14 @@ public class ConvertToJsonNodeEngine extends AbstractConvertEngine implements En
 	protected Builder<JsonNode> getBuilder(FormatEnum toFormat) {
 		return BuilderFactoryService.getInstance().getBuilder(toFormat, JsonNode.class);
 	}
+
+	@Override
+	public <T> JsonNode autoConvert(T sourceObj, FormatEnum fromFormat, FormatEnum toFormat) {
+		return autoConvert(sourceObj, fromFormat, toFormat, Locale.getDefault());
+	}
+
+	@Override
+	public <T> JsonNode autoConvert(T sourceObj, FormatEnum fromFormat, FormatEnum toFormat, Locale currentLocale) {
+		return (JsonNode) super.getResult(sourceObj, fromFormat, toFormat, currentLocale);
+	}
 }

@@ -2,12 +2,13 @@ package com.github.jmodel.mapper.impl.analyzers;
 
 import com.github.jmodel.mapper.api.Analyzer;
 import com.github.jmodel.mapper.api.FormatEnum;
+import com.github.jmodel.mapper.api.ModeEnum;
 import com.github.jmodel.mapper.spi.AnalyzerFactory;
 
 public class AnalyzerFactoryImpl implements AnalyzerFactory {
 
 	@Override
-	public Analyzer getAnalyzer(FormatEnum format, String extendAnalyzerName) {
+	public Analyzer getAnalyzer(ModeEnum mode, FormatEnum format, String extendAnalyzerName) {
 		switch (format) {
 		case JSON:
 			return new JsonAnalyzer();

@@ -7,6 +7,8 @@ import java.util.Map;
 
 public abstract class Mapping {
 
+	private ModeEnum mode = ModeEnum.MANUAL;
+
 	private FormatEnum fromFormat;
 
 	private FormatEnum toFormat;
@@ -26,6 +28,14 @@ public abstract class Mapping {
 	private List<String> rawSourceFieldPaths = new ArrayList<String>();
 
 	private List<String> rawTargetFieldPaths = new ArrayList<String>();
+
+	public ModeEnum getMode() {
+		return mode;
+	}
+
+	public void setMode(ModeEnum mode) {
+		this.mode = mode;
+	}
 
 	public FormatEnum getFromFormat() {
 		return fromFormat;

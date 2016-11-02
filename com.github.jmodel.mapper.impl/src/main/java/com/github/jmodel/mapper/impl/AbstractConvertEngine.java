@@ -22,6 +22,7 @@ import com.github.jmodel.mapper.api.FormatCheckerFactoryService;
 import com.github.jmodel.mapper.api.FormatEnum;
 import com.github.jmodel.mapper.api.IllegalException;
 import com.github.jmodel.mapper.api.Mapping;
+import com.github.jmodel.mapper.api.ModeEnum;
 import com.github.jmodel.mapper.api.Model;
 
 public abstract class AbstractConvertEngine {
@@ -31,6 +32,27 @@ public abstract class AbstractConvertEngine {
 	protected static String DEFAULT_PACKAGE_NAME = "com.github.jmodel.mapper";
 
 	protected static String NAME_PATTERN = "([a-zA-Z_][a-zA-Z\\d_]*\\.)*[a-zA-Z_][a-zA-Z\\d_]*";
+
+	protected <T> Object getResult(T sourceObj, FormatEnum fromFormat, FormatEnum toFormat, Locale currentLocale) {
+		messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle", currentLocale);
+
+		if (sourceObj == null) {
+			throw new IllegalException(messages.getString("SRC_IS_NULL"));
+		}
+
+		FormatChecker formatChecker = FormatCheckerFactoryService.getInstance().getFormatChecker(fromFormat);
+		if (!formatChecker.isValid(sourceObj)) {
+			throw new IllegalException(String.format(currentLocale, messages.getString("SRC_FMT_NOT_SUPPORT"),
+					sourceObj.getClass().getName(), fromFormat));
+		}
+
+		AnalyzerFactoryService analyzerFactoryService = AnalyzerFactoryService.getInstance();
+		Analyzer analyzer = analyzerFactoryService.getAnalyzer(ModeEnum.AUTO, fromFormat, null);
+		Builder<?> builder = getBuilder(toFormat);
+
+		Model model = analyzer.process(ModeEnum.AUTO, new EntityImpl(), sourceObj);
+		return builder.process(model);
+	}
 
 	protected <T> Object getResult(T sourceObj, String mappingURI, Map<String, Object> argsMap, Locale currentLocale) {
 
@@ -77,24 +99,31 @@ public abstract class AbstractConvertEngine {
 					sourceObj.getClass().getName(), mapping.getFromFormat()));
 		}
 
-		Model sourceTemplateModel = mapping.getSourceTemplateModel();
-		Model targetTemplateModel = mapping.getTargetTemplateModel();
-		if (!mapping.isTemplateReady()) {
-			populateModel(sourceTemplateModel, mapping.getRawSourceFieldPaths());
-			populateModel(targetTemplateModel, mapping.getRawTargetFieldPaths());
-			mapping.setTemplateReady(true);
-		}
+		ModeEnum mode = mapping.getMode();
 		AnalyzerFactoryService analyzerFactoryService = AnalyzerFactoryService.getInstance();
-		Analyzer analyzer = analyzerFactoryService.getAnalyzer(mapping.getFromFormat(), null);
-		Model sourceModel = analyzer.process(sourceTemplateModel.clone(), sourceObj);
-		Model targetModel = targetTemplateModel.clone();
-		fillTargetInstance(targetModel, new HashMap<String, Field>(), new HashMap<String, Model>());
-		mapping.execute(sourceModel, targetModel, argsMap, currentLocale);
-		cleanUnusedField(targetModel);
-
+		Analyzer analyzer = analyzerFactoryService.getAnalyzer(mode, mapping.getFromFormat(), null);
 		Builder<?> builder = getBuilder(mapping.getToFormat());
 
-		return builder.process(targetModel);
+		if (mode == null || mode == ModeEnum.MANUAL) {
+			Model sourceTemplateModel = mapping.getSourceTemplateModel();
+			Model targetTemplateModel = mapping.getTargetTemplateModel();
+			if (!mapping.isTemplateReady()) {
+				populateModel(sourceTemplateModel, mapping.getRawSourceFieldPaths());
+				populateModel(targetTemplateModel, mapping.getRawTargetFieldPaths());
+				mapping.setTemplateReady(true);
+			}
+
+			Model sourceModel = analyzer.process(mode, sourceTemplateModel.clone(), sourceObj);
+			Model targetModel = targetTemplateModel.clone();
+			fillTargetInstance(targetModel, new HashMap<String, Field>(), new HashMap<String, Model>());
+			mapping.execute(sourceModel, targetModel, argsMap, currentLocale);
+			cleanUnusedField(targetModel);
+			return builder.process(targetModel);
+		} else {
+			Model sourceTemplateModel = mapping.getSourceTemplateModel();
+			Model model = analyzer.process(mode, sourceTemplateModel.clone(), sourceObj);
+			return builder.process(model);
+		}
 	}
 
 	private void fillTargetInstance(Model targetInstanceModel, Map<String, Field> filePathMap,

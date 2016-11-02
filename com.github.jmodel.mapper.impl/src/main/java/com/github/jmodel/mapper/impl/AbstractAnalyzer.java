@@ -7,12 +7,47 @@ import com.github.jmodel.mapper.api.Analyzer;
 import com.github.jmodel.mapper.api.Array;
 import com.github.jmodel.mapper.api.Entity;
 import com.github.jmodel.mapper.api.Field;
+import com.github.jmodel.mapper.api.IllegalException;
+import com.github.jmodel.mapper.api.ModeEnum;
 import com.github.jmodel.mapper.api.Model;
 
 public abstract class AbstractAnalyzer<T> implements Analyzer {
 
-	protected void populateModel(Model sourceModel, final Map<String, Field> fieldPathMap,
-			Map<String, Model> modelPathMap, T node) {
+	protected void populateInstance(final ModeEnum mode, final Model sourceModel, final Map<String, Field> fieldPathMap,
+			final Map<String, Model> modelPathMap, final T node) {
+		if (mode == null || mode == ModeEnum.MANUAL) {
+			populateInstanceManually(sourceModel, fieldPathMap, modelPathMap, node);
+		} else if (mode == ModeEnum.AUTO) {
+			populateInstanceAutomatically(sourceModel, fieldPathMap, modelPathMap, "", node);
+		} else {
+			throw new IllegalException("wrong mode");
+		}
+	}
+
+	/**
+	 * If mapping mode is auto, model will be built base on source object.
+	 * 
+	 * @param sourceModel
+	 * @param fieldPathMap
+	 * @param modelPathMap
+	 * @param node
+	 */
+	protected abstract void populateInstanceAutomatically(final Model sourceModel,
+			final Map<String, Field> fieldPathMap, final Map<String, Model> modelPathMap, final String nodeName,
+			final T node);
+
+	/**
+	 * If mapping mode is manual, source model template is built base on the raw
+	 * source field path which is defined in mapping file. This method should be
+	 * called when need to set value of fields in source model instance.
+	 * 
+	 * @param sourceModel
+	 * @param fieldPathMap
+	 * @param modelPathMap
+	 * @param node
+	 */
+	protected void populateInstanceManually(final Model sourceModel, final Map<String, Field> fieldPathMap,
+			final Map<String, Model> modelPathMap, final T node) {
 		if (sourceModel != null) {
 			sourceModel.setModelPathMap(modelPathMap);
 			sourceModel.setFieldPathMap(fieldPathMap);
@@ -47,7 +82,7 @@ public abstract class AbstractAnalyzer<T> implements Analyzer {
 
 					if (subModel instanceof Entity) {
 						if (subNode != null) {
-							populateModel(subModel, fieldPathMap, modelPathMap, subNode);
+							populateInstanceManually(subModel, fieldPathMap, modelPathMap, subNode);
 						}
 					} else if (subModel instanceof Array) {
 						modelPathMap.put(subModel.getModelPath(), subModel);
@@ -65,9 +100,16 @@ public abstract class AbstractAnalyzer<T> implements Analyzer {
 		}
 	}
 
-	protected abstract void setFieldValue(T sourceNode, Field field);
+	/**
+	 * Different ways to set value for different model, e.g. JSON, XML
+	 * 
+	 * @param sourceNode
+	 * @param field
+	 */
+	protected abstract void setFieldValue(final T sourceNode, final Field field);
 
-	protected abstract T getSubNode(T node, String subNodeName);
+	protected abstract T getSubNode(final T node, final String subNodeName);
 
-	protected abstract void populateSubModel(T subNode, Model subModel, Model subSubModel);
+	protected abstract void populateSubModel(final T subNode, final Model subModel, final Model subSubModel);
+
 }

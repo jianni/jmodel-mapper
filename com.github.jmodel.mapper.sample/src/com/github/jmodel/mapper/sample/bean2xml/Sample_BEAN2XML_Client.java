@@ -28,7 +28,7 @@ public class Sample_BEAN2XML_Client {
 		Engine<String> convertEngine = EngineFactoryService.getInstance().getEngine(String.class);
 		Map<String, Object> argsMap = new HashMap<String, Object>();
 		List<String> varNames = new ArrayList<String>();
-		varNames.add("hello field name1");
+		varNames.add("hello field name");
 		
 		argsMap.put("varName", varNames);
 		try {

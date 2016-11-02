@@ -22,14 +22,14 @@ public class AnalyzerFactoryService {
 		return service;
 	}
 
-	public Analyzer getAnalyzer(FormatEnum format, String extendAnalyzerName) {
+	public Analyzer getAnalyzer(ModeEnum mode, FormatEnum format, String extendAnalyzerName) {
 		Analyzer analyzer = null;
 
 		try {
 			Iterator<AnalyzerFactory> analyzerFactorys = loader.iterator();
 			while (analyzer == null && analyzerFactorys.hasNext()) {
 				AnalyzerFactory analyzerFactory = analyzerFactorys.next();
-				analyzer = analyzerFactory.getAnalyzer(format, extendAnalyzerName);
+				analyzer = analyzerFactory.getAnalyzer(mode, format, extendAnalyzerName);
 			}
 		} catch (ServiceConfigurationError serviceError) {
 			analyzer = null;
