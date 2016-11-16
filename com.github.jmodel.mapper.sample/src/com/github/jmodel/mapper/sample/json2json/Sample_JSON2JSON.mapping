@@ -15,9 +15,9 @@ mapping com.github.jmodel.mapper.sample.json2json.Sample_JSON2JSON {
 		 * From Policy Customer List to Party List
 		 */		
 		PolicyCustomerList[] => PartyList[] { 
-			IF Customer.PartyType=="20"
+			IF Customer.PartyType=="20" THEN
 				"1" => ContactType; 
-			ELSEIF Customer.PartyType=="21"
+			ELSEIF Customer.PartyType=="21" THEN
 		    	"2" => ContactType; 
 			ELSE
 				Customer.PartyType => ContactType;    	

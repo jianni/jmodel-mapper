@@ -18,7 +18,7 @@ public class Sample_JSON2XML_Auto_Client {
 
 		Engine<String> convertEngine = EngineFactoryService.getInstance().getEngine(String.class);
 		try {
-			String output = convertEngine.autoConvert(f, FormatEnum.JSON, FormatEnum.JSON);
+			String output = convertEngine.autoConvert(f, FormatEnum.JSON, FormatEnum.XML);
 			System.out.println(output);
 		} catch (IllegalException e) {
 			e.printStackTrace();
