@@ -14,6 +14,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import java.util.Map
 import com.github.jmodel.mapper.plugin.mappingLanguage.Variable
 import java.util.Locale
+import com.github.jmodel.mapper.plugin.util.Util
 
 /**
  * <p>Infers a JVM model from the source model.</p> 

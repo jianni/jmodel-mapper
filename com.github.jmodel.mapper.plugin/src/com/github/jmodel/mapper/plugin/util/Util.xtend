@@ -1,4 +1,4 @@
-package com.github.jmodel.mapper.plugin.jvmmodel
+package com.github.jmodel.mapper.plugin.util
 
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.xbase.XAbstractFeatureCall
@@ -10,6 +10,7 @@ import com.github.jmodel.mapper.plugin.mappingLanguage.Filter
 import com.github.jmodel.mapper.plugin.mappingLanguage.Block
 import com.github.jmodel.mapper.plugin.mappingLanguage.SingleSourceFieldPath
 import com.github.jmodel.mapper.plugin.mappingLanguage.Body
+import com.github.jmodel.mapper.plugin.mappingLanguage.Mapping
 
 class Util {
 
@@ -39,6 +40,14 @@ class Util {
 		}
 	}
 
+	def static String getFromSchema(EObject x) {
+		if(x instanceof Mapping){
+			return x.from.schema
+		}else{
+			getFromSchema(x.eContainer)
+		}
+	}
+			
 	def static String getVariableName(String variableDeclaration) {
 		variableDeclaration.substring(2, variableDeclaration.length - 1)
 	}

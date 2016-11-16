@@ -41,6 +41,9 @@ public class ModelHelper {
 	public static <T> void arrayMapping(final Model rootSourceModel, final Model rootTargetModel,
 			final Model mySourceModel, Model myTargetModel, final String sourceModelPath, final String targetModelPath,
 			Integer targetIndex, final Predicate<String> p, final Consumer<T> c) {
+		if (mySourceModel == null) {
+			return;
+		}
 		arrayMapping(rootSourceModel, rootTargetModel, mySourceModel, myTargetModel, sourceModelPath, targetModelPath,
 				targetIndex, false, p, c);
 	}

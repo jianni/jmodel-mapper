@@ -7,10 +7,10 @@ Mapping:
 	'mapping' name=QualifiedName ('extends' superType=[Mapping|QualifiedName])? '{' from=From to=To body=Body '}';
 
 From:
-	'from:' name=Format;
+	'from:' name=Format ('[' schema=QualifiedName ']')?;
 
 To:
-	'to:' name=Format;
+	'to:' name=Format ('[' schema=QualifiedName ']')?;
 
 Body returns xbase::XBlockExpression:
 	{Body}
@@ -84,14 +84,14 @@ IfTargetFieldsMapping returns xbase::XExpression:
 
 SourceFieldPathIf returns xbase::XIfExpression:
 	{SourceFieldPathIf}
-	"IF" if=XOrExpression
+	"IF" if=XOrExpression "THEN"
 	then=SourceFieldPathSetting
 	(else=SourceFieldPathElseIf | "ELSE" else=SourceFieldPathSetting)?
 	"ENDIF";
 
 SourceFieldPathElseIf returns xbase::XIfExpression:
 	{SourceFieldPathElseIf}
-	"ELSEIF" if=XOrExpression
+	"ELSEIF" if=XOrExpression "THEN"
 	then=SourceFieldPathSetting
 	(else=SourceFieldPathElseIf | "ELSE" else=SourceFieldPathSetting)?;
 

@@ -22,6 +22,7 @@ import org.eclipse.xtext.xbase.compiler.XbaseCompiler
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import com.github.jmodel.mapper.plugin.mappingLanguage.Variable
 import com.github.jmodel.mapper.plugin.mappingLanguage.DataType
+import com.github.jmodel.mapper.plugin.util.Util
 
 /**
  * The main procedure of compiling:
