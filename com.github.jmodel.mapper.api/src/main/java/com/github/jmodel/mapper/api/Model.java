@@ -28,6 +28,10 @@ public interface Model {
 	public List<Model> getSubModels();
 	
 	public void setSubModels(List<Model> subModels);
+	
+	public Object getTargetBean();
+	
+	public void setTargetBean(Object targetBean);
 
 	public Model clone();
 }

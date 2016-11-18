@@ -92,38 +92,41 @@ public abstract class AbstractConvertEngine {
 			}
 		}
 
-		FormatChecker formatChecker = FormatCheckerFactoryService.getInstance()
-				.getFormatChecker(mapping.getFromFormat());
-		if (!formatChecker.isValid(sourceObj)) {
-			throw new IllegalException(String.format(currentLocale, messages.getString("SRC_FMT_NOT_SUPPORT"),
-					sourceObj.getClass().getName(), mapping.getFromFormat()));
-		}
-
-		ModeEnum mode = mapping.getMode();
-		AnalyzerFactoryService analyzerFactoryService = AnalyzerFactoryService.getInstance();
-		Analyzer analyzer = analyzerFactoryService.getAnalyzer(mode, mapping.getFromFormat(), null);
 		Builder<?> builder = getBuilder(mapping.getToFormat());
-
-		if (mode == null || mode == ModeEnum.MANUAL) {
-			Model sourceTemplateModel = mapping.getSourceTemplateModel();
-			Model targetTemplateModel = mapping.getTargetTemplateModel();
-			if (!mapping.isTemplateReady()) {
-				populateModel(sourceTemplateModel, mapping.getRawSourceFieldPaths());
-				populateModel(targetTemplateModel, mapping.getRawTargetFieldPaths());
-				mapping.setTemplateReady(true);
-			}
-
-			Model sourceModel = analyzer.process(mode, sourceTemplateModel.clone(), sourceObj);
-			Model targetModel = targetTemplateModel.clone();
-			fillTargetInstance(targetModel, new HashMap<String, Field>(), new HashMap<String, Model>());
-			mapping.execute(sourceModel, targetModel, argsMap, currentLocale);
-			cleanUnusedField(targetModel);
-			return builder.process(targetModel);
-		} else {
-			Model sourceTemplateModel = mapping.getSourceTemplateModel();
-			Model model = analyzer.process(mode, sourceTemplateModel.clone(), sourceObj);
-			return builder.process(model);
+		Model targetTemplateModel = mapping.getTargetTemplateModel();
+		if (!mapping.isTemplateReady()) {
+			populateModel(targetTemplateModel, mapping.getRawTargetFieldPaths());
 		}
+		Model targetModel = targetTemplateModel.clone();
+		fillTargetInstance(targetModel, new HashMap<String, Field>(), new HashMap<String, Model>());
+
+		Model sourceModel = null;
+		if (sourceObj instanceof Model) {
+			sourceModel = (Model) sourceObj;
+		} else {
+			FormatChecker formatChecker = FormatCheckerFactoryService.getInstance()
+					.getFormatChecker(mapping.getFromFormat());
+			if (!formatChecker.isValid(sourceObj)) {
+				throw new IllegalException(String.format(currentLocale, messages.getString("SRC_FMT_NOT_SUPPORT"),
+						sourceObj.getClass().getName(), mapping.getFromFormat()));
+			}
+			ModeEnum mode = mapping.getMode();
+			AnalyzerFactoryService analyzerFactoryService = AnalyzerFactoryService.getInstance();
+			Analyzer analyzer = analyzerFactoryService.getAnalyzer(mode, mapping.getFromFormat(), null);
+
+			Model sourceTemplateModel = mapping.getSourceTemplateModel();
+
+			if (!mapping.isTemplateReady()) {
+				populateModel(sourceTemplateModel, mapping.getRawSourceFieldPaths());				
+			}
+			sourceModel = analyzer.process(mode, sourceTemplateModel.clone(), sourceObj);
+		}
+		
+		mapping.setTemplateReady(true);
+		mapping.execute(sourceModel, targetModel, argsMap, currentLocale);
+		cleanUnusedField(targetModel);
+		return builder.process(targetModel);
+
 	}
 
 	private void fillTargetInstance(Model targetInstanceModel, Map<String, Field> filePathMap,

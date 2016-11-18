@@ -25,6 +25,8 @@ public abstract class ModelImpl implements Model {
 
 	private Map<String, Model> modelPathMap = new HashMap<String, Model>();
 
+	private Object targetBean;
+
 	public String getName() {
 		return name;
 	}
@@ -88,6 +90,14 @@ public abstract class ModelImpl implements Model {
 
 	public void setModelPathMap(Map<String, Model> modelPathMap) {
 		this.modelPathMap = modelPathMap;
+	}
+
+	public Object getTargetBean() {
+		return targetBean;
+	}
+
+	public void setTargetBean(Object targetBean) {
+		this.targetBean = targetBean;
 	}
 
 	public void removeFieldByPath(String path) {

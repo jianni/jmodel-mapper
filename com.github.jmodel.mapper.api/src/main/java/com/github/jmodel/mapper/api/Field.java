@@ -1,6 +1,5 @@
 package com.github.jmodel.mapper.api;
 
-//should consider type of value and format
 public interface Field {
 
 	public String getName();
@@ -10,6 +9,14 @@ public interface Field {
 	public String getValue();
 
 	public void setValue(String value);
+
+	public DataTypeEnum getDataType();
+
+	public void setDataType(DataTypeEnum dataType);
+
+	public String getFormatString();
+
+	public void setFormatString(String formatString);
 
 	public Entity getParentEntity();
 

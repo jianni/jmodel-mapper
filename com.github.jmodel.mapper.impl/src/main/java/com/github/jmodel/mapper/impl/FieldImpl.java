@@ -1,5 +1,6 @@
 package com.github.jmodel.mapper.impl;
 
+import com.github.jmodel.mapper.api.DataTypeEnum;
 import com.github.jmodel.mapper.api.Entity;
 import com.github.jmodel.mapper.api.Field;
 
@@ -8,6 +9,10 @@ public class FieldImpl implements Field {
 	private String name;
 
 	private String value;
+
+	private DataTypeEnum dataType;
+
+	private String formatString;
 
 	private boolean isUsed = false;
 
@@ -30,6 +35,22 @@ public class FieldImpl implements Field {
 		setUsed(true);
 	}
 
+	public DataTypeEnum getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(DataTypeEnum dataType) {
+		this.dataType = dataType;
+	}
+
+	public String getFormatString() {
+		return formatString;
+	}
+
+	public void setFormatString(String formatString) {
+		this.formatString = formatString;
+	}
+
 	public void setParentEntity(Entity parentEntity) {
 		this.parentEntity = parentEntity;
 	}
@@ -49,12 +70,14 @@ public class FieldImpl implements Field {
 	public Field clone() {
 		Field clonedField = new FieldImpl();
 		clonedField.setName(this.getName() + "");
+//		clonedField.setDataType(this.getDataType());
+//		clonedField.setFormatString(this.getFormatString() + "");
+
 		return clonedField;
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "[name:" + name + ",value=" + value + "]";
 	}
 

@@ -23,6 +23,7 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import com.github.jmodel.mapper.plugin.mappingLanguage.Variable
 import com.github.jmodel.mapper.plugin.mappingLanguage.DataType
 import com.github.jmodel.mapper.plugin.util.Util
+import com.github.jmodel.mapper.plugin.mappingLanguage.Mapping
 
 /**
  * The main procedure of compiling:
@@ -42,7 +43,13 @@ class MappingXbaseCompiler extends XbaseCompiler {
 			Body: {
 				newLine
 				append('''super.execute(mySourceModel, myTargetModel, myVariablesMap, currentLocale);''')
-				
+
+				val mapping = expr.eContainer as Mapping
+				if (mapping.to.bean != null) {
+					newLine
+					append('''myTargetModel.setTargetBean(new «mapping.to.bean»());''')
+				}
+
 				for (block : expr.blocks) {
 					doInternalToJavaStatement(block, it, isReferenced)
 				}
@@ -202,18 +209,36 @@ class MappingXbaseCompiler extends XbaseCompiler {
 							append('''
 								myTargetModel.getFieldPathMap().get(«a_m»[1] + ".«targetFieldPath.expression»").setValue(fieldValue); 
 							''')
+							if (targetFieldPath.dataType !=	null || targetFieldPath.dataType!=DataType.STR) {
+								newLine
+								append('''
+									myTargetModel.getFieldPathMap().get(«a_m»[1] + ".«targetFieldPath.expression»").setDataType(«Util.getDataType(targetFieldPath.dataType)»); 
+								''')
+							}
 						} else {
 							val m = getName(fullSourceModelPath + "_" + fullTargetModelPath + "_m")
 							newLine
 							append('''
 								myTargetModel.getFieldPathMap().get(«m»[1] + ".«targetFieldPath.expression»").setValue(fieldValue); 
 							''')
+							if (targetFieldPath.dataType !=	null || targetFieldPath.dataType!=DataType.STR) {
+								newLine
+								append('''
+									myTargetModel.getFieldPathMap().get(«m»[1] + ".«targetFieldPath.expression»").setDataType(«Util.getDataType(targetFieldPath.dataType)»);  
+								''')
+							}
 						}
 					} else {
 						newLine
 						append('''
 							myTargetModel.getFieldPathMap().get("«fullTargetModelPath».«targetFieldPath.expression»").setValue(fieldValue); 
 						''')
+						if (targetFieldPath.dataType !=	null || targetFieldPath.dataType!=DataType.STR) {
+							newLine
+							append('''
+								myTargetModel.getFieldPathMap().get("«fullTargetModelPath».«targetFieldPath.expression»").setDataType(«Util.getDataType(targetFieldPath.dataType)»);   
+							''')
+						}
 					}
 
 					newLine
@@ -321,7 +346,7 @@ class MappingXbaseCompiler extends XbaseCompiler {
 					append(expr.value)
 				}
 				XNullLiteral: {
-					//always be used as comparable value
+					// always be used as comparable value
 					append("(Comparable)null")
 				}
 				XBooleanLiteral: {

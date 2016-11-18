@@ -11,6 +11,7 @@ import com.github.jmodel.mapper.plugin.mappingLanguage.Block
 import com.github.jmodel.mapper.plugin.mappingLanguage.SingleSourceFieldPath
 import com.github.jmodel.mapper.plugin.mappingLanguage.Body
 import com.github.jmodel.mapper.plugin.mappingLanguage.Mapping
+import com.github.jmodel.mapper.plugin.mappingLanguage.DataType
 
 class Util {
 
@@ -41,15 +42,27 @@ class Util {
 	}
 
 	def static String getFromSchema(EObject x) {
-		if(x instanceof Mapping){
+		if (x instanceof Mapping) {
 			return x.from.schema
-		}else{
+		} else {
 			getFromSchema(x.eContainer)
 		}
 	}
-			
+
 	def static String getVariableName(String variableDeclaration) {
 		variableDeclaration.substring(2, variableDeclaration.length - 1)
+	}
+
+	def static String getDataType(DataType dataType) {
+		switch dataType {
+			case DataType.STR: "com.github.jmodel.mapper.api.DataTypeEnum.STRING"
+			case DataType.INT: "com.github.jmodel.mapper.api.DataTypeEnum.INTEGER"
+			case DataType.LONG: "com.github.jmodel.mapper.api.DataTypeEnum.LONG"
+			case DataType.BOOL: "com.github.jmodel.mapper.api.DataTypeEnum.BOOLEAN"
+			case DataType.DEC: "com.github.jmodel.mapper.api.DataTypeEnum.BIGDECIMAL"
+			case DataType.DATE: "com.github.jmodel.mapper.api.DataTypeEnum.DATE"
+			default: "com.github.jmodel.mapper.api.DataTypeEnum.STRING"
+		}
 	}
 
 	def static boolean isDot(String x) {

@@ -20,6 +20,10 @@ public class BuilderFactoryImpl implements BuilderFactory {
 			if (returnType.getName().equals("java.lang.String")) {
 				return (Builder<R>) (new XmlStringBuilder());
 			}
+		case BEAN:
+			if (returnType.getName().equals("java.lang.Object")) {
+				return (Builder<R>) (new BeanBuilder());
+			}
 		default:
 			return null;
 		}

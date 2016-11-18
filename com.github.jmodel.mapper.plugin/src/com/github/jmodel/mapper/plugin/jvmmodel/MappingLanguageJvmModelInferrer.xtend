@@ -116,6 +116,11 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 	}
 
 	def genCommonSetting(Mapping element) '''
+		com.github.jmodel.mapper.api.Entity sourceRootModel = new com.github.jmodel.mapper.impl.EntityImpl();
+		myInstance.setSourceTemplateModel(sourceRootModel);
+		com.github.jmodel.mapper.api.Entity targetRootModel = new com.github.jmodel.mapper.impl.EntityImpl();
+		myInstance.setTargetTemplateModel(targetRootModel); 
+				
 		«IF element.from.name.literal== 'JSON'»								
 			myInstance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.JSON);														
 		«ELSEIF element.from.name.literal== 'XML'» 
@@ -132,10 +137,7 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 			myInstance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.BEAN);	
 		«ENDIF»	
 		
-		com.github.jmodel.mapper.api.Entity sourceRootModel = new com.github.jmodel.mapper.impl.EntityImpl();
-		myInstance.setSourceTemplateModel(sourceRootModel);
-		com.github.jmodel.mapper.api.Entity targetRootModel = new com.github.jmodel.mapper.impl.EntityImpl();
-		myInstance.setTargetTemplateModel(targetRootModel); 	
+			
 					
 	'''
 

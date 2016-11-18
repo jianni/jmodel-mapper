@@ -10,7 +10,7 @@ From:
 	'from:' name=Format ('[' schema=QualifiedName ']')?;
 
 To:
-	'to:' name=Format ('[' schema=QualifiedName ']')?;
+	'to:' name=Format ('(' bean=QualifiedName ')')? ('[' schema=QualifiedName ']')?;
 
 Body returns xbase::XBlockExpression:
 	{Body}
@@ -103,4 +103,4 @@ enum Format:
 	XML='XML' | JSON='JSON' | BEAN='BEAN';
 
 enum DataType:
-	STR='STR' | INT='INT' | DEC='DEC' | DATE='DATE' | LIST='LIST';
+	STR='STR' | INT='INT' | LONG='LONG' | BOOL='BOOL' | DEC='DEC' | DATE='DATE';
