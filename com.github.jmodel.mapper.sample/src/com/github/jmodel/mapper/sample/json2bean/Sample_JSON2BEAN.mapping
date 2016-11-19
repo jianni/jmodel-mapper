@@ -1,0 +1,23 @@
+mapping com.github.jmodel.mapper.sample.json2bean.Sample_JSON2BEAN {
+
+	from: JSON
+	to: BEAN ( com.github.jmodel.mapper.sample.json2bean.Bean )
+	Policy => Bean {
+		. => Fields[] {
+			"EffectiveDate" => Name;
+			EffectiveDate => Value ( STR );
+		};
+
+		. => Fields[] + {
+			"Premium" => Name;
+			Premium => Value;
+		};
+
+		. => Fields[] + {
+			"ExpiryDate" => Name;
+			ExpiryDate => Value;
+		};
+
+	};
+
+}
