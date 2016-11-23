@@ -1,7 +1,7 @@
 mapping com.github.jmodel.mapper.sample.json2json.Sample_JSON2JSON { 
 	
 	from: JSON 
-	to: JSON    
+	to: JSON     
 	                            
 	/**
 	 * From Policy to PolicyEntity
@@ -11,7 +11,7 @@ mapping com.github.jmodel.mapper.sample.json2json.Sample_JSON2JSON {
 		EffectiveDate => EffDate;  
 		ExpiryDate => ExpDate; 
 		  
-		/**
+		/** 
 		 * From Policy Customer List to Party List
 		 */		
 		PolicyCustomerList[] => PartyList[] { 

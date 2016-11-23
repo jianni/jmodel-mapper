@@ -1,7 +1,7 @@
 package com.github.jmodel.mapper.impl.builders;
 
+import com.github.jmodel.api.FormatEnum;
 import com.github.jmodel.mapper.api.Builder;
-import com.github.jmodel.mapper.api.FormatEnum;
 import com.github.jmodel.mapper.spi.BuilderFactory;
 
 public class BuilderFactoryImpl implements BuilderFactory {

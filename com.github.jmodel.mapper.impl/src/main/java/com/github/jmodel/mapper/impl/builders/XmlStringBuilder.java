@@ -15,11 +15,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.github.jmodel.mapper.api.Array;
+import com.github.jmodel.api.Array;
+import com.github.jmodel.api.Entity;
+import com.github.jmodel.api.Field;
+import com.github.jmodel.api.Model;
 import com.github.jmodel.mapper.api.Builder;
-import com.github.jmodel.mapper.api.Entity;
-import com.github.jmodel.mapper.api.Field;
-import com.github.jmodel.mapper.api.Model;
 
 public class XmlStringBuilder implements Builder<String> {
 

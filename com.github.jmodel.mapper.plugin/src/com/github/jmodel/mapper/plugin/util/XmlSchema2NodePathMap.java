@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.jmodel.mapper.api.IllegalException;
+import com.github.jmodel.api.IllegalException;
 import com.github.jmodel.mapper.plugin.validation.SchemaErrorHandler;
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaLoader;

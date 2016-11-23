@@ -3,6 +3,8 @@ package com.github.jmodel.mapper.api;
 import java.util.Iterator;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
+
+import com.github.jmodel.api.FormatEnum;
 import com.github.jmodel.mapper.spi.BuilderFactory;
 
 public class BuilderFactoryService {

@@ -6,11 +6,11 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jmodel.api.Model;
 import com.github.jmodel.mapper.api.Builder;
-import com.github.jmodel.mapper.api.Model;
 
 public class JsonStringBuilder implements Builder<String> {
-	
+
 	private JsonFactory jsonFactory = new JsonFactory();
 
 	public String process(Model targetModel) {
@@ -28,5 +28,4 @@ public class JsonStringBuilder implements Builder<String> {
 		return stringWriter.toString();
 	}
 
-	
 }

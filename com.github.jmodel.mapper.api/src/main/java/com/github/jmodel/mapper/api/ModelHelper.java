@@ -6,6 +6,12 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import com.github.jmodel.api.Array;
+import com.github.jmodel.api.Entity;
+import com.github.jmodel.api.Field;
+import com.github.jmodel.api.IllegalException;
+import com.github.jmodel.api.Model;
+
 public class ModelHelper {
 
 	public static void buildRelationForSubModel(Model parentModel, Model subModel) {

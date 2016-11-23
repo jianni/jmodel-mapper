@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.jmodel.mapper.api.Array;
-import com.github.jmodel.mapper.api.Entity;
-import com.github.jmodel.mapper.api.Field;
-import com.github.jmodel.mapper.api.Model;
+import com.github.jmodel.api.Array;
+import com.github.jmodel.api.Entity;
+import com.github.jmodel.api.Field;
+import com.github.jmodel.api.Model;
 
 public class JsonBuilderHelper {
 

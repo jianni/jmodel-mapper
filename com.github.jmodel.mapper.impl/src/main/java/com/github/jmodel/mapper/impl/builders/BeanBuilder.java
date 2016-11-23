@@ -12,13 +12,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.github.jmodel.mapper.api.Array;
+import com.github.jmodel.api.Array;
+import com.github.jmodel.api.DataTypeEnum;
+import com.github.jmodel.api.Entity;
+import com.github.jmodel.api.Field;
+import com.github.jmodel.api.IllegalException;
+import com.github.jmodel.api.Model;
 import com.github.jmodel.mapper.api.Builder;
-import com.github.jmodel.mapper.api.DataTypeEnum;
-import com.github.jmodel.mapper.api.Entity;
-import com.github.jmodel.mapper.api.Field;
-import com.github.jmodel.mapper.api.IllegalException;
-import com.github.jmodel.mapper.api.Model;
 
 public class BeanBuilder implements Builder<Object> {
 

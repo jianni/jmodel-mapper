@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.jmodel.mapper.api.Engine;
-import com.github.jmodel.mapper.api.EngineFactoryService;
-import com.github.jmodel.mapper.api.Entity;
-import com.github.jmodel.mapper.api.Field;
-import com.github.jmodel.mapper.api.IllegalException;
-import com.github.jmodel.mapper.impl.EntityImpl;
-import com.github.jmodel.mapper.impl.FieldImpl;
+import com.github.jmodel.api.Entity;
+import com.github.jmodel.api.Field;
+import com.github.jmodel.api.IllegalException;
+import com.github.jmodel.impl.EntityImpl;
+import com.github.jmodel.impl.FieldImpl;
+import com.github.jmodel.mapper.api.MappingEngine;
+import com.github.jmodel.mapper.api.MappingEngineFactoryService;
 
 public class Sample_BEAN2XML_Client {
 
@@ -25,15 +25,15 @@ public class Sample_BEAN2XML_Client {
 		field.setName("hello field name");
 
 		// bean2json usage
-		Engine<String> convertEngine = EngineFactoryService.getInstance().getEngine(String.class);
+		MappingEngine<String> convertEngine = MappingEngineFactoryService.getInstance().getEngine(String.class);
 		Map<String, Object> argsMap = new HashMap<String, Object>();
 		List<String> varNames = new ArrayList<String>();
 		varNames.add("hello field name");
-		
+
 		argsMap.put("varName", varNames);
 		try {
-			String output = convertEngine.convert(entity, "com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML_Child",
-					argsMap);
+			String output = convertEngine.convert(entity,
+					"com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML_Child", argsMap);
 			System.out.println(output);
 		} catch (IllegalException e) {
 			e.printStackTrace();

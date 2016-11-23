@@ -55,13 +55,13 @@ class Util {
 
 	def static String getDataType(DataType dataType) {
 		switch dataType {
-			case DataType.STR: "com.github.jmodel.mapper.api.DataTypeEnum.STRING"
-			case DataType.INT: "com.github.jmodel.mapper.api.DataTypeEnum.INTEGER"
-			case DataType.LONG: "com.github.jmodel.mapper.api.DataTypeEnum.LONG"
-			case DataType.BOOL: "com.github.jmodel.mapper.api.DataTypeEnum.BOOLEAN"
-			case DataType.DEC: "com.github.jmodel.mapper.api.DataTypeEnum.BIGDECIMAL"
-			case DataType.DATE: "com.github.jmodel.mapper.api.DataTypeEnum.DATE"
-			default: "com.github.jmodel.mapper.api.DataTypeEnum.STRING"
+			case DataType.STR: "com.github.jmodel.api.DataTypeEnum.STRING"
+			case DataType.INT: "com.github.jmodel.api.DataTypeEnum.INTEGER"
+			case DataType.LONG: "com.github.jmodel.api.DataTypeEnum.LONG"
+			case DataType.BOOL: "com.github.jmodel.api.DataTypeEnum.BOOLEAN"
+			case DataType.DEC: "com.github.jmodel.api.DataTypeEnum.BIGDECIMAL"
+			case DataType.DATE: "com.github.jmodel.api.DataTypeEnum.DATE"
+			default: "com.github.jmodel.api.DataTypeEnum.STRING"
 		}
 	}
 

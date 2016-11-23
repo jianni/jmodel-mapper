@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public abstract class Mapping {
+import com.github.jmodel.api.Analyzer;
+import com.github.jmodel.api.FormatEnum;
+import com.github.jmodel.api.Model;
 
-	private ModeEnum mode = ModeEnum.MANUAL;
+public abstract class Mapping {
 
 	private FormatEnum fromFormat;
 
@@ -28,14 +30,6 @@ public abstract class Mapping {
 	private List<String> rawSourceFieldPaths = new ArrayList<String>();
 
 	private List<String> rawTargetFieldPaths = new ArrayList<String>();
-
-	public ModeEnum getMode() {
-		return mode;
-	}
-
-	public void setMode(ModeEnum mode) {
-		this.mode = mode;
-	}
 
 	public FormatEnum getFromFormat() {
 		return fromFormat;

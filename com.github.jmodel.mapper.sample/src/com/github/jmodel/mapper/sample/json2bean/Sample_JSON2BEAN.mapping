@@ -10,7 +10,7 @@ mapping com.github.jmodel.mapper.sample.json2bean.Sample_JSON2BEAN {
 
 		. => Fields[] + {
 			"Premium" => Name;
-			Premium => Value;
+			Premium => Value; 
 		};
 
 		. => Fields[] + {

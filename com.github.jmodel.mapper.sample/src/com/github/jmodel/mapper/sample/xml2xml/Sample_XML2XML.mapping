@@ -9,7 +9,7 @@ mapping com.github.jmodel.mapper.sample.xml2xml.Sample_XML2XML {
 		PartyList[] => PolicyCustomerList[]{
 			ContactType => XXX;	
 		};
-				
+				 
 	};
 }  
  

@@ -1,6 +1,5 @@
 package com.github.jmodel.mapper.plugin.jvmmodel
 
-import com.github.jmodel.mapper.api.Model
 import com.github.jmodel.mapper.plugin.mappingLanguage.Block
 import com.github.jmodel.mapper.plugin.mappingLanguage.Mapping
 import com.github.jmodel.mapper.plugin.mappingLanguage.SingleSourceFieldPath
@@ -15,6 +14,7 @@ import java.util.Map
 import com.github.jmodel.mapper.plugin.mappingLanguage.Variable
 import java.util.Locale
 import com.github.jmodel.mapper.plugin.util.Util
+import com.github.jmodel.api.Model
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -116,25 +116,25 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 	}
 
 	def genCommonSetting(Mapping element) '''
-		com.github.jmodel.mapper.api.Entity sourceRootModel = new com.github.jmodel.mapper.impl.EntityImpl();
+		com.github.jmodel.api.Entity sourceRootModel = new com.github.jmodel.impl.EntityImpl();
 		myInstance.setSourceTemplateModel(sourceRootModel);
-		com.github.jmodel.mapper.api.Entity targetRootModel = new com.github.jmodel.mapper.impl.EntityImpl();
+		com.github.jmodel.api.Entity targetRootModel = new com.github.jmodel.impl.EntityImpl();
 		myInstance.setTargetTemplateModel(targetRootModel); 
 				
 		«IF element.from.name.literal== 'JSON'»								
-			myInstance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.JSON);														
+			myInstance.setFromFormat(com.github.jmodel.api.FormatEnum.JSON);														
 		«ELSEIF element.from.name.literal== 'XML'» 
-			myInstance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.XML);	
+			myInstance.setFromFormat(com.github.jmodel.api.FormatEnum.XML);	
 		«ELSEIF element.from.name.literal== 'BEAN'» 
-			myInstance.setFromFormat(com.github.jmodel.mapper.api.FormatEnum.BEAN);	
+			myInstance.setFromFormat(com.github.jmodel.api.FormatEnum.BEAN);	
 		«ENDIF»
 		
 		«IF element.to.name.literal== 'JSON'»								
-			myInstance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.JSON);														
+			myInstance.setToFormat(com.github.jmodel.api.FormatEnum.JSON);														
 		«ELSEIF element.to.name.literal== 'XML'» 
-			myInstance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.XML);	
+			myInstance.setToFormat(com.github.jmodel.api.FormatEnum.XML);	
 		«ELSEIF element.to.name.literal== 'BEAN'» 
-			myInstance.setToFormat(com.github.jmodel.mapper.api.FormatEnum.BEAN);	
+			myInstance.setToFormat(com.github.jmodel.api.FormatEnum.BEAN);	
 		«ENDIF»	
 		
 			

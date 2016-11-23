@@ -40,7 +40,11 @@
 			<groupId>com.github.jmodel</groupId>
 			<artifactId>com.github.jmodel.mapper.api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jmodel</groupId>
+			<artifactId>com.github.jmodel.impl</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

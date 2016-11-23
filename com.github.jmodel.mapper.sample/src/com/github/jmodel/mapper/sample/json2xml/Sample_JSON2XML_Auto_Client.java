@@ -2,10 +2,10 @@ package com.github.jmodel.mapper.sample.json2xml;
 
 import java.io.InputStream;
 
-import com.github.jmodel.mapper.api.Engine;
-import com.github.jmodel.mapper.api.EngineFactoryService;
-import com.github.jmodel.mapper.api.FormatEnum;
-import com.github.jmodel.mapper.api.IllegalException;
+import com.github.jmodel.api.FormatEnum;
+import com.github.jmodel.api.IllegalException;
+import com.github.jmodel.mapper.api.MappingEngine;
+import com.github.jmodel.mapper.api.MappingEngineFactoryService;
 
 public class Sample_JSON2XML_Auto_Client {
 
@@ -16,9 +16,9 @@ public class Sample_JSON2XML_Auto_Client {
 
 		// json2xml usage
 
-		Engine<String> convertEngine = EngineFactoryService.getInstance().getEngine(String.class);
+		MappingEngine<String> convertEngine = MappingEngineFactoryService.getInstance().getEngine(String.class);
 		try {
-			String output = convertEngine.autoConvert(f, FormatEnum.JSON, FormatEnum.XML);
+			String output = convertEngine.convert(f, FormatEnum.JSON, FormatEnum.XML);
 			System.out.println(output);
 		} catch (IllegalException e) {
 			e.printStackTrace();
