@@ -156,7 +156,7 @@ class MappingXbaseCompiler extends XbaseCompiler {
 						}
 
 						newLine
-						append('''com.github.jmodel.mapper.api.ModelHelper.arrayMapping(mySourceModel, myTargetModel, «strSourceModel», «strTargetModel», «strSourceModelPath», «strTargetModelPath», «strIndex», «strIsAppend», «p»,''')
+						append('''com.github.jmodel.mapper.api.MappingHelper.arrayMapping(mySourceModel, myTargetModel, «strSourceModel», «strTargetModel», «strSourceModelPath», «strTargetModelPath», «strIndex», «strIsAppend», «p»,''')
 
 						newLine
 						append('''(String[] «m») ->''')
@@ -322,9 +322,9 @@ class MappingXbaseCompiler extends XbaseCompiler {
 				XBinaryOperation: {
 					val operation = expr.getConcreteSyntaxFeatureName()
 					if (Util.isPredict(operation)) {
-						append('''(com.github.jmodel.mapper.api.ModelHelper.predict(''')
+						append('''(com.github.jmodel.api.ModelHelper.predict(''')
 					} else {
-						append('''(com.github.jmodel.mapper.api.ModelHelper.calc(''')
+						append('''(com.github.jmodel.api.ModelHelper.calc(''')
 					}
 					doInternalToJavaStatement(expr.leftOperand, it, isReferenced)
 					append(''',''')

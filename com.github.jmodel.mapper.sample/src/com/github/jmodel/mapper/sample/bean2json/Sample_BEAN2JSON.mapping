@@ -4,7 +4,7 @@ mapping com.github.jmodel.mapper.sample.bean2json.Sample_BEAN2JSON {
 	to: JSON 
 	       
 	Entity => MyField {		
-		Name => XXX; 
+		Name => XXX;  
 		Fields[] => YYY[] { 
 			Name => HHH; 
 		};		

@@ -9,7 +9,7 @@ mapping com.github.jmodel.mapper.sample.json2xml.Sample_JSON2XML {
 	Policy => PolicyEntity {
 		"PolicyType" => Type;
 		EffectiveDate => EffDate;
-		ExpiryDate => ExpDate;
+		ExpiryDate => ExpDate; 
  
 		/**
 		 * From Policy Customer List to Party List

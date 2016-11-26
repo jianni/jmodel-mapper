@@ -1,18 +1,15 @@
 package com.github.jmodel.mapper.api;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import com.github.jmodel.api.Array;
 import com.github.jmodel.api.Entity;
 import com.github.jmodel.api.Field;
-import com.github.jmodel.api.IllegalException;
 import com.github.jmodel.api.Model;
 
-public class ModelHelper {
+public class MappingHelper {
 
 	public static void buildRelationForSubModel(Model parentModel, Model subModel) {
 		subModel.setParentModel(parentModel);
@@ -89,7 +86,7 @@ public class ModelHelper {
 
 						targetEntityModel = (Entity) targetEntityModel.clone();
 						myTargetModel.getSubModels().add(targetEntityModel);
-						ModelHelper.buildRelationForSubModel(myTargetModel, targetEntityModel);
+						MappingHelper.buildRelationForSubModel(myTargetModel, targetEntityModel);
 						modelPath[1] = targetEntityModel.getModelPath();
 						modelPath[2] = (myTargetModel.getSubModels().size() - 1) + "";
 
@@ -135,7 +132,7 @@ public class ModelHelper {
 
 						targetEntityModel = (Entity) targetEntityModel.clone();
 						myTargetModel.getSubModels().add(targetEntityModel);
-						ModelHelper.buildRelationForSubModel(myTargetModel, targetEntityModel);
+						MappingHelper.buildRelationForSubModel(myTargetModel, targetEntityModel);
 						modelPath[1] = targetEntityModel.getModelPath();
 						modelPath[2] = (myTargetModel.getSubModels().size() - 1) + "";
 
@@ -146,104 +143,6 @@ public class ModelHelper {
 				targetEntityModel.setUsed(true);
 				c.accept((T) modelPath);
 			}
-		}
-	}
-
-	public static <T1, T2> String calc(final T1 leftOperant, final T2 rightOperant, final OperationEnum operation,
-			final Locale currentLocale) {
-		ResourceBundle messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle",
-				currentLocale);
-		switch (operation) {
-		case PLUS: {
-			if (leftOperant instanceof String || rightOperant instanceof String) {
-				return String.valueOf(leftOperant) + String.valueOf(rightOperant);
-			} else if (leftOperant instanceof Integer && rightOperant instanceof Integer) {
-				return String.valueOf((Integer) leftOperant + (Integer) rightOperant);
-			}
-			return null;
-		}
-		default:
-			throw new IllegalException(
-					String.format(currentLocale, messages.getString("OPR_NOT_SUPPORT"), operation, "xxx"));
-		}
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Boolean predict(final Comparable leftOperant, final Comparable rightOperant,
-			final OperationEnum operation, final Locale currentLocale) {
-		ResourceBundle messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle",
-				currentLocale);
-		if (leftOperant == null || rightOperant == null) {
-			switch (operation) {
-			case EQUALS: {
-				return leftOperant == rightOperant;
-			}
-			case NOTEQUALS: {
-				return leftOperant != rightOperant;
-			}
-			default:
-				throw new IllegalException(
-						String.format(currentLocale, messages.getString("OPR_NOT_SUPPORT"), operation, "NULL"));
-			}
-		}
-		int compareResult = leftOperant.compareTo(rightOperant);
-		switch (operation) {
-		case EQUALS: {
-			return compareResult == 0 ? true : false;
-		}
-		case NOTEQUALS: {
-			return compareResult != 0 ? true : false;
-		}
-		case GT: {
-			return compareResult > 0 ? true : false;
-		}
-		case GTE: {
-			return (compareResult > 0 || compareResult == 0) ? true : false;
-		}
-		case LT: {
-			return compareResult < 0 ? true : false;
-		}
-		case LTE: {
-			return (compareResult < 0 || compareResult == 0) ? true : false;
-		}
-		default:
-			throw new IllegalException(
-					String.format(currentLocale, messages.getString("OPR_NOT_SUPPORT"), operation, "Comparable"));
-		}
-	}
-
-	public static Boolean predict(final String leftOperant, final List<String> rightOperant,
-			final OperationEnum operation, final Locale currentLocale) {
-		ResourceBundle messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle",
-				currentLocale);
-		switch (operation) {
-		case IN: {
-			return rightOperant.contains(leftOperant);
-		}
-		case NOTIN: {
-			return !rightOperant.contains(leftOperant);
-		}
-		default:
-			throw new IllegalException(
-					String.format(currentLocale, messages.getString("OPR_NOT_SUPPORT"), operation, "String and List"));
-		}
-
-	}
-
-	public static Boolean predict(final Boolean leftOperant, final Boolean rightOperant, final OperationEnum operation,
-			final Locale currentLocale) {
-		ResourceBundle messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle",
-				currentLocale);
-		switch (operation) {
-		case OR: {
-			return Boolean.logicalOr(leftOperant, rightOperant);
-		}
-		case AND: {
-			return Boolean.logicalAnd(leftOperant, rightOperant);
-		}
-		default:
-			throw new IllegalException(
-					String.format(currentLocale, messages.getString("OPR_NOT_SUPPORT"), operation, "Boolean"));
 		}
 	}
 

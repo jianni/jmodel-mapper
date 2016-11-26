@@ -26,17 +26,17 @@ class Util {
 
 	def static String operEnum(String oper) {
 		switch oper {
-			case "==": "com.github.jmodel.mapper.api.OperationEnum.EQUALS"
-			case "!=": "com.github.jmodel.mapper.api.OperationEnum.NOTEQUALS"
-			case ">": "com.github.jmodel.mapper.api.OperationEnum.GT"
-			case ">=": "com.github.jmodel.mapper.api.OperationEnum.GTE"
-			case "<": "com.github.jmodel.mapper.api.OperationEnum.LT"
-			case "<=": "com.github.jmodel.mapper.api.OperationEnum.LTE"
-			case "in": "com.github.jmodel.mapper.api.OperationEnum.IN"
-			case "!in": "com.github.jmodel.mapper.api.OperationEnum.NOTIN"
-			case "||": "com.github.jmodel.mapper.api.OperationEnum.OR"
-			case "&&": "com.github.jmodel.mapper.api.OperationEnum.AND"
-			case "+": "com.github.jmodel.mapper.api.OperationEnum.PLUS"
+			case "==": "com.github.jmodel.api.OperationEnum.EQUALS"
+			case "!=": "com.github.jmodel.api.OperationEnum.NOTEQUALS"
+			case ">": "com.github.jmodel.api.OperationEnum.GT"
+			case ">=": "com.github.jmodel.api.OperationEnum.GTE"
+			case "<": "com.github.jmodel.api.OperationEnum.LT"
+			case "<=": "com.github.jmodel.api.OperationEnum.LTE"
+			case "in": "com.github.jmodel.api.OperationEnum.IN"
+			case "!in": "com.github.jmodel.api.OperationEnum.NOTIN"
+			case "||": "com.github.jmodel.api.OperationEnum.OR"
+			case "&&": "com.github.jmodel.api.OperationEnum.AND"
+			case "+": "com.github.jmodel.api.OperationEnum.PLUS"
 			default: "The operation is not supported"
 		}
 	}

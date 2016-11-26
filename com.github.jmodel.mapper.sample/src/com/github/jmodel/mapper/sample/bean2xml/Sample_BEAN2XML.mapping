@@ -9,7 +9,7 @@ mapping com.github.jmodel.mapper.sample.bean2xml.Sample_BEAN2XML {
 			:Name in ${varName}        
 			(Name + Name) => HHH;
 		};		     
-	}; 
+	};   
 } 
     
     
