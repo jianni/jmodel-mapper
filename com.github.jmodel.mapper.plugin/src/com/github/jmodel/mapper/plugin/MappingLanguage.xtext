@@ -20,7 +20,11 @@ Block returns xbase::XBlockExpression:
 	{Block}
 	(absolutePath=AbsolutePath)? sourceModelPath=ModelPathExpr '=>' targetModelPath=ModelPathExpr (isAppend='+')?
 	'{' (filter=Filter)?
-	fieldMappings+=FieldMapping* blocks+=Block* '};';
+	blockContents+=BlockContent* '};';
+
+BlockContent:
+	{BlockContent}
+	content = (FieldMapping | Block);
 
 AbsolutePath:
 	'#'+;
@@ -53,7 +57,7 @@ TargetFieldPath returns xbase::XExpression:
 
 SourceFieldPath returns xbase::XExpression:
 	{SourceFieldPath}
-	expression=(SourceFieldPathXLiteral | SourceFieldPathXParenthesizedExpression | SingleSourceFieldPath);
+	expression=(SourceFieldPathXLiteral | SourceFieldPathXParenthesizedExpression | SingleSourceFieldPath | Variable);
 
 SourceFieldPathXLiteral returns xbase::XExpression:
 	{SourceFieldPathXLiteral}

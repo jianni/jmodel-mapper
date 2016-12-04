@@ -12,6 +12,7 @@ import com.github.jmodel.mapper.plugin.mappingLanguage.SingleSourceFieldPath
 import com.github.jmodel.mapper.plugin.mappingLanguage.Body
 import com.github.jmodel.mapper.plugin.mappingLanguage.Mapping
 import com.github.jmodel.mapper.plugin.mappingLanguage.DataType
+import com.github.jmodel.mapper.plugin.mappingLanguage.BlockContent
 
 class Util {
 
@@ -37,6 +38,7 @@ class Util {
 			case "||": "com.github.jmodel.api.OperationEnum.OR"
 			case "&&": "com.github.jmodel.api.OperationEnum.AND"
 			case "+": "com.github.jmodel.api.OperationEnum.PLUS"
+			case "*": "com.github.jmodel.api.OperationEnum.MULTIPLY"
 			default: "The operation is not supported"
 		}
 	}
@@ -104,13 +106,25 @@ class Util {
 		}
 	}
 
+//	/**
+//	 * If the EObject is in a array path, include self, then return true 
+//	 */
+//	def static boolean isArrayPath(EObject eObj) {
+//		val sourceModelPath = getFullModelPath(eObj, true)
+//		val targetModelPath = getFullModelPath(eObj, false)
+//		sourceModelPath.contains("[") || targetModelPath.contains("[")
+//	}
 	/**
 	 * If the EObject is in a array path, include self, then return true 
 	 */
-	def static boolean isArrayPath(EObject eObj) {
-		val sourceModelPath = getFullModelPath(eObj, true)
-		val targetModelPath = getFullModelPath(eObj, false)
-		sourceModelPath.contains("[") || targetModelPath.contains("[")
+	def static boolean isArrayPath(EObject eObj, boolean isSourceModel) {
+		if (isSourceModel) {
+			val sourceModelPath = getFullModelPath(eObj, true)
+			return sourceModelPath.contains("[")
+		} else {
+			val targetModelPath = getFullModelPath(eObj, false)
+			return targetModelPath.contains("[")
+		}
 	}
 
 	/**
@@ -121,30 +135,46 @@ class Util {
 		sourceModelPath.contains("[")
 	}
 
+//	/**
+//	 * If the EObject is in a array path, not include self, then return true 
+//	 */
+//	def static boolean isInArrayPath(EObject eObj) {
+//		isSourceModelInArrayPath(eObj) || isTargetModelInArrayPath(eObj)
+//	}
 	/**
 	 * If the EObject is in a array path, not include self, then return true 
 	 */
-	def static boolean isInArrayPath(EObject eObj) {
-		isSourceModelInArrayPath(eObj) || isTargetModelInArrayPath(eObj)
+	def static boolean isInArrayPath(EObject eObj, boolean isSourceModel) {
+		if (isSourceModel) {
+			return isSourceModelInArrayPath(eObj)
+		} else {
+			return isTargetModelInArrayPath(eObj)
+		}
 	}
 
 	def private static boolean isSourceModelInArrayPath(EObject eObj) {
-		val sourceModelPath = getFullModelPath(eObj, true)
-		val lastDotPosition = sourceModelPath.lastIndexOf(".");
-		if (lastDotPosition < 0) {
-			false
+		if (eObj instanceof Body) {
+			return false
+		}
+
+		val lastBlock = getLastArrayBlock(eObj, true)
+		if (lastBlock == null) {
+			return false
 		} else {
-			sourceModelPath.substring(0, lastDotPosition).contains("[")
+			return true
 		}
 	}
 
 	def private static boolean isTargetModelInArrayPath(EObject eObj) {
-		val targetModelPath = getFullModelPath(eObj, false)
-		val lastDotPosition = targetModelPath.lastIndexOf(".");
-		if (lastDotPosition < 0) {
-			false
+		if (eObj instanceof Body) {
+			return false
+		}
+
+		val lastBlock = getLastArrayBlock(eObj, false)
+		if (lastBlock == null) {
+			return false
 		} else {
-			targetModelPath.substring(0, lastDotPosition).contains("[")
+			return true
 		}
 	}
 
@@ -153,6 +183,17 @@ class Util {
 	 */
 	def static boolean isArray(EObject eObj) {
 		isSourceModelArray(eObj) || isTargetModelArray(eObj)
+	}
+
+	/**
+	 * If the EObject is in a array 
+	 */
+	def static boolean isArray(EObject eObj, boolean isSourceModel) {
+		if (isSourceModel) {
+			return isSourceModelArray(eObj)
+		} else {
+			return isTargetModelArray(eObj)
+		}
 	}
 
 	def private static boolean isSourceModelArray(EObject eObj) {
@@ -186,11 +227,11 @@ class Util {
 	}
 
 	def static String getSourceModelPathByPath(EObject eObj) {
-		getFullModelPath(getBlockByPath(eObj), true)
+		return getFullModelPath(getBlockByPath(eObj), true)
 	}
 
 	def static String getTargetModelPathByPath(EObject eObj) {
-		getFullModelPath(getBlockByPath(eObj), false)
+		return getFullModelPath(getBlockByPath(eObj), false)
 	}
 
 	def static Block getBlockByPath(EObject eObj) {
@@ -198,13 +239,13 @@ class Util {
 		val Stack<Block> blockStack = new Stack<Block>()
 		buildBlockStack(blockStack, eObj)
 		if (eObj instanceof Block) {
-			getBlockByPath0(blockStack, eObj.absolutePath.length)
+			return getBlockByPath0(blockStack, eObj.absolutePath.length)
 		} else if (eObj instanceof SingleSourceFieldPath) {
-			getBlockByPath0(blockStack, eObj.absolutePath.length)
+			return getBlockByPath0(blockStack, eObj.absolutePath.length)
 		} else if (eObj instanceof Body) {
 			throw new RuntimeException("please contact system administrator");
 		} else {
-			getBlockByPath(eObj.eContainer);
+			return getBlockByPath(eObj.eContainer);
 		}
 	}
 
@@ -213,7 +254,7 @@ class Util {
 			blockStack.pop
 		} else {
 			blockStack.pop
-			getBlockByPath0(blockStack, index - 1)
+			return getBlockByPath0(blockStack, index - 1)
 		}
 	}
 
@@ -255,38 +296,40 @@ class Util {
 			fullTargetModelPath.equals(getFullModelPath(block, false))) {
 			return block
 		} else {
-			for (subBlock : block.blocks) {
-				return getAppendedBlock0(subBlock as Block, fullTargetModelPath)
+			for (subBlockContent : block.blockContents) {
+				val subContent = subBlockContent as BlockContent
+				if (subContent.content != null && subContent.content instanceof Block) {
+					return getAppendedBlock0(subContent.content as Block, fullTargetModelPath)
+				}
 			}
 			return null
 		}
 	}
 
 	def static Block getLastArrayBlock(EObject eObj, boolean isOfSourceModel) {
-		getLastArrayBlock0(eObj, isOfSourceModel, 0);
+		var currentBlock = getCurrentBlock(eObj);
+		/*
+		 * consider absolute path #
+		 */
+		if (isOfSourceModel && currentBlock.absolutePath != null) {
+			return getBlockByPath(eObj); // just for source model
+		}
+
+		return getLastArrayBlock0(currentBlock.eContainer, isOfSourceModel);
 	}
 
-	def private static Block getLastArrayBlock0(EObject eObj, boolean isOfSourceModel, int found) {
+	def private static Block getLastArrayBlock0(EObject eObj, boolean isOfSourceModel) {
 		if (eObj instanceof Body) {
 			return null;
 		} else if (eObj instanceof Block) {
+			if (isOfSourceModel && eObj.sourceModelPath.endsWith("]")) {
+				return eObj
 
-			if (isOfSourceModel && eObj.absolutePath != null) {
-				return getBlockByPath(eObj); // just for source model
-			}
-			if (isArray(eObj)) {
-				if (found == 1) {
-					return eObj
-				} else {
-					if (!isOfSourceModel && isInAppendPath(eObj)) {
-						return getLastArrayBlock0(eObj.eContainer, isOfSourceModel, found)
-					} else {
-						return getLastArrayBlock0(eObj.eContainer, isOfSourceModel, found + 1)
-					}
-				}
+			} else if (!isOfSourceModel && eObj.targetModelPath.endsWith("]")) {
+				return eObj
 			}
 		}
-		return getLastArrayBlock0(eObj.eContainer, isOfSourceModel, found)
+		return getLastArrayBlock0(eObj.eContainer, isOfSourceModel)
 
 	}
 
@@ -304,7 +347,7 @@ class Util {
 				return eObj.sourceModelPath
 			}
 		}
-		getCurrentSourceModelPath(eObj.eContainer)
+		return getCurrentSourceModelPath(eObj.eContainer)
 	}
 
 	def static String getCurrentTargetModelPath(EObject eObj) {
@@ -313,7 +356,7 @@ class Util {
 				return eObj.targetModelPath
 			}
 		}
-		getCurrentTargetModelPath(eObj.eContainer)
+		return getCurrentTargetModelPath(eObj.eContainer)
 	}
 
 	// get source model path of last array, if no array, return null
@@ -363,7 +406,7 @@ class Util {
 		}
 
 		if (!(eObj instanceof Block)) {
-			getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
+			return getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
 		}
 
 		val Block block = (eObj as Block)
@@ -377,24 +420,26 @@ class Util {
 				}
 			} else {
 				if (block.sourceModelPath.equals(".")) {
-					getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
+					return getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
 				} else {
 					if (modelPath.trim.length == 0) {
-						getFullModelPath0(eObj.eContainer, block.sourceModelPath, isSourceModelPath)
+						return getFullModelPath0(eObj.eContainer, block.sourceModelPath, isSourceModelPath)
 					} else {
-						getFullModelPath0(eObj.eContainer, block.sourceModelPath + '.' + modelPath, isSourceModelPath)
+						return getFullModelPath0(eObj.eContainer, block.sourceModelPath + '.' + modelPath,
+							isSourceModelPath)
 					}
 
 				}
 			}
 		} else {
 			if (block.targetModelPath.equals(".")) {
-				getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
+				return getFullModelPath0(eObj.eContainer, modelPath, isSourceModelPath)
 			} else {
 				if (modelPath.trim.length == 0) {
-					getFullModelPath0(eObj.eContainer, block.targetModelPath, isSourceModelPath)
+					return getFullModelPath0(eObj.eContainer, block.targetModelPath, isSourceModelPath)
 				} else {
-					getFullModelPath0(eObj.eContainer, block.targetModelPath + '.' + modelPath, isSourceModelPath)
+					return getFullModelPath0(eObj.eContainer, block.targetModelPath + '.' + modelPath,
+						isSourceModelPath)
 				}
 
 			}

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.jmodel.api.IllegalException;
-import com.github.jmodel.mapper.plugin.validation.SchemaErrorHandler;
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaLoader;
 import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
@@ -48,7 +47,6 @@ public class XmlSchema2NodePathMap {
 		XMLSchemaLoader xmlSchemaLoader = new XMLSchemaLoader();
 		xmlSchemaLoader.setParameter(Constants.XML_SECURITY_PROPERTY_MANAGER, new XMLSecurityPropertyManager());
 		xmlSchemaLoader.setParameter(Constants.SECURITY_MANAGER, new XMLSecurityManager());
-		xmlSchemaLoader.setParameter(Constants.DOM_ERROR_HANDLER, new SchemaErrorHandler());
 		xmlSchemaLoader.setParameter(Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_FULL_CHECKING, false);
 		XMLInputSource input = new XMLInputSource(null, file, null);
 		input.setSystemId(file);
