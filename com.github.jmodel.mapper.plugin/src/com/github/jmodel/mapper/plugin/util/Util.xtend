@@ -309,10 +309,17 @@ class Util {
 	def static Block getLastArrayBlock(EObject eObj, boolean isOfSourceModel) {
 		var currentBlock = getCurrentBlock(eObj);
 		/*
-		 * consider absolute path #
+		 * handle specific source model path : #
 		 */
 		if (isOfSourceModel && currentBlock.absolutePath != null) {
 			return getBlockByPath(eObj); // just for source model
+		}
+
+		/*
+		 * handle specific target model path : .+
+		 */
+		if (!isOfSourceModel && currentBlock.targetModelPath.equals(".") && currentBlock.isAppend != null) {
+			currentBlock = getCurrentAliasedBlockForTargetModelPath(currentBlock)
 		}
 
 		return getLastArrayBlock0(currentBlock.eContainer, isOfSourceModel);
