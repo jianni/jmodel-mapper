@@ -219,57 +219,35 @@ class MappingXbaseCompiler extends XbaseCompiler {
 				 */
 				if (Util.isArrayPath(expr, false)) {
 					
-					/*
-					 * If target model is in a append path
-					 */
-					if (Util.isInAppendPath(expr) && Util.getCurrentBlock(expr).isAppend == null) {
-						val aliasedBlock = Util.getCurrentAliasedBlockForTargetModelPath(expr)
-						val aliasedSourceModelPath = Util.getFullModelPath(aliasedBlock, true)
-						val aliasedTargetModelPath = Util.getFullModelPath(aliasedBlock, false)
-						val a_m = getName(aliasedSourceModelPath + "_" + aliasedTargetModelPath + "_m")
+					if(Util.isArray(expr, false)) {
+						val m = getName(fullSourceModelPath + "_" + fullTargetModelPath + "_m")
 						newLine
 						append('''
-							myTargetModel.getFieldPathMap().get(«a_m»[1] + ".«targetFieldPath.expression»").setValue(fieldValue); 
+							myTargetModel.getFieldPathMap().get(«m»[1] + ".«targetFieldPath.expression»").setValue(fieldValue); 
 						''')
 						if (targetFieldPath.dataType != null || targetFieldPath.dataType !=	DataType.STR) {
 							newLine
 							append('''
-								myTargetModel.getFieldPathMap().get(«a_m»[1] + ".«targetFieldPath.expression»").setDataType(«Util.getDataType(targetFieldPath.dataType)»); 
+								myTargetModel.getFieldPathMap().get(«m»[1] + ".«targetFieldPath.expression»").setDataType(«Util.getDataType(targetFieldPath.dataType)»);  
 							''')
 						}
-					} else {
-						if(Util.isArray(expr, false)) {
-							val m = getName(fullSourceModelPath + "_" + fullTargetModelPath + "_m")
+					}else{
+						val lastTargetArrayBlock = Util.getLastArrayBlock(expr, false)
+						if (lastTargetArrayBlock == null) {
 							newLine
 							append('''
-								myTargetModel.getFieldPathMap().get(«m»[1] + ".«targetFieldPath.expression»").setValue(fieldValue); 
+								myTargetModel.getFieldPathMap().get("«fullTargetModelPath».«targetFieldPath.expression»").setValue(fieldValue); 
 							''')
-							if (targetFieldPath.dataType != null || targetFieldPath.dataType !=	DataType.STR) {
-								newLine
-								append('''
-									myTargetModel.getFieldPathMap().get(«m»[1] + ".«targetFieldPath.expression»").setDataType(«Util.getDataType(targetFieldPath.dataType)»);  
-								''')
-							}
+						} else {
+							val lastSourceArrayModelPath = Util.getFullModelPath(lastTargetArrayBlock, true)
+							val lastTargetArrayModelPath = Util.getFullModelPath(lastTargetArrayBlock, false)
+							val l_m = getName(lastSourceArrayModelPath + "_" + lastTargetArrayModelPath + "_m")
 						
-						}else{
-							val lastTargetArrayBlock = Util.getLastArrayBlock(expr, false)
-							if (lastTargetArrayBlock == null) {
-								newLine
-								append('''
-									myTargetModel.getFieldPathMap().get("«fullTargetModelPath».«targetFieldPath.expression»").setValue(fieldValue); 
-								''')
-							} else {
-								val lastSourceArrayModelPath = Util.getFullModelPath(lastTargetArrayBlock, true)
-								val lastTargetArrayModelPath = Util.getFullModelPath(lastTargetArrayBlock, false)
-								val l_m = getName(lastSourceArrayModelPath + "_" + lastTargetArrayModelPath + "_m")
-							
-								val lastTargetArrayModelPathAfter = fullTargetModelPath.replace(lastTargetArrayModelPath, "")
-								newLine
-								append('''
-									myTargetModel.getFieldPathMap().get(«l_m»[1] + "«lastTargetArrayModelPathAfter»" + ".«targetFieldPath.expression»").setValue(fieldValue); 
-								''')
-							}
-
+							val lastTargetArrayModelPathAfter = fullTargetModelPath.replace(lastTargetArrayModelPath, "")
+							newLine
+							append('''
+								myTargetModel.getFieldPathMap().get(«l_m»[1] + "«lastTargetArrayModelPathAfter»" + ".«targetFieldPath.expression»").setValue(fieldValue); 
+							''')
 						}
 					}
 				} else {

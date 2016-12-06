@@ -18,7 +18,7 @@ Body returns xbase::XBlockExpression:
 
 Block returns xbase::XBlockExpression:
 	{Block}
-	(absolutePath=AbsolutePath)? sourceModelPath=ModelPathExpr '=>' targetModelPath=ModelPathExpr (isAppend='+')?
+	(absolutePath=AbsolutePath)? sourceModelPath=ModelPathExpr (sourceRecursive=Recursive)? '=>' targetModelPath=ModelPathExpr  (targetRecursive=Recursive)? (isAppend='+')?
 	'{' (filter=Filter)?
 	blockContents+=BlockContent* '};';
 
@@ -26,6 +26,9 @@ BlockContent:
 	{BlockContent}
 	content = (FieldMapping | Block);
 
+Recursive:
+	'(*)';
+	
 AbsolutePath:
 	'#'+;
 

@@ -34,10 +34,10 @@ class MappingLanguageFormatter extends AbstractDeclarativeFormatter {
 
 		// block
 		val block = g.getBlockAccess
-		c.setIndentation(block.getLeftCurlyBracketKeyword_6(), block.getRightCurlyBracketSemicolonKeyword_9())
+		c.setIndentation(block.getLeftCurlyBracketKeyword_8(), block.getRightCurlyBracketSemicolonKeyword_11())
 		c.setLinewrap().before(block.getRule)
-		c.setLinewrap().after(block.getLeftCurlyBracketKeyword_6)
-		c.setLinewrap(2).after(block.getRightCurlyBracketSemicolonKeyword_9)
+		c.setLinewrap().after(block.getLeftCurlyBracketKeyword_8)
+		c.setLinewrap(2).after(block.getRightCurlyBracketSemicolonKeyword_11)
 		c.setNoSpace().between(block.getAbsolutePathAssignment_1, block.getSourceModelPathAssignment_2)
 
 		// fieldMapping

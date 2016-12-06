@@ -1,6 +1,7 @@
 package com.github.jmodel.mapper.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,7 +30,11 @@ public abstract class Mapping {
 
 	private List<String> rawSourceFieldPaths = new ArrayList<String>();
 
+	private Map<String, Boolean> sourceModelRecursiveMap = new HashMap<String, Boolean>();
+
 	private List<String> rawTargetFieldPaths = new ArrayList<String>();
+
+	private Map<String, Boolean> targetModelRecursiveMap = new HashMap<String, Boolean>();
 
 	public FormatEnum getFromFormat() {
 		return fromFormat;
@@ -103,12 +108,28 @@ public abstract class Mapping {
 		this.rawSourceFieldPaths = rawSourceFieldPaths;
 	}
 
+	public Map<String, Boolean> getSourceModelRecursiveMap() {
+		return sourceModelRecursiveMap;
+	}
+
+	public void setSourceModelRecursiveMap(Map<String, Boolean> sourceModelRecursiveMap) {
+		this.sourceModelRecursiveMap = sourceModelRecursiveMap;
+	}
+
 	public List<String> getRawTargetFieldPaths() {
 		return rawTargetFieldPaths;
 	}
 
 	public void setRawTargetFieldPaths(List<String> rawTargetFieldPaths) {
 		this.rawTargetFieldPaths = rawTargetFieldPaths;
+	}
+
+	public Map<String, Boolean> getTargetModelRecursiveMap() {
+		return targetModelRecursiveMap;
+	}
+
+	public void setTargetModelRecursiveMap(Map<String, Boolean> targetModelRecursiveMap) {
+		this.targetModelRecursiveMap = targetModelRecursiveMap;
 	}
 
 	public void execute(final Model mySourceModel, final Model myTargetModel, final Map<String, Object> myVariablesMap,

@@ -150,6 +150,13 @@ class MappingLanguageJvmModelInferrer extends AbstractModelInferrer {
 			«FOR block : element.eAllContents.toIterable.filter(typeof(Block))»
 				myInstance.getRawSourceFieldPaths().add("«Util.getFullModelPath(block, true)»._");
 				myInstance.getRawTargetFieldPaths().add("«Util.getFullModelPath(block, false)»._");
+				
+				«IF block.sourceRecursive!=null»
+					myInstance.getSourceModelRecursiveMap().put("«Util.getFullModelPath(block, true)»._", true);
+				«ENDIF»
+				«IF block.targetRecursive!=null»
+					myInstance.getTargetModelRecursiveMap().put("«Util.getFullModelPath(block, false)»._", true);
+				«ENDIF»
 			«ENDFOR»
 		
 		    «FOR field : element.eAllContents.toIterable.filter(typeof(SingleSourceFieldPath))»

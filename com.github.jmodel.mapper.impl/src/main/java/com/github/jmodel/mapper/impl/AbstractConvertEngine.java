@@ -33,6 +33,15 @@ public abstract class AbstractConvertEngine {
 
 	protected static String NAME_PATTERN = "([a-zA-Z_][a-zA-Z\\d_]*\\.)*[a-zA-Z_][a-zA-Z\\d_]*";
 
+	/**
+	 * For auto converting by source object
+	 * 
+	 * @param sourceObj
+	 * @param fromFormat
+	 * @param toFormat
+	 * @param currentLocale
+	 * @return
+	 */
 	protected <T> Object getResult(T sourceObj, FormatEnum fromFormat, FormatEnum toFormat, Locale currentLocale) {
 		AnalyzerFactoryService analyzerFactoryService = AnalyzerFactoryService.getInstance();
 		Analyzer analyzer = analyzerFactoryService.getAnalyzer(fromFormat, null);
@@ -42,11 +51,28 @@ public abstract class AbstractConvertEngine {
 		return builder.process(model);
 	}
 
+	/**
+	 * For auto converting by model
+	 * 
+	 * @param model
+	 * @param toFormat
+	 * @param currentLocale
+	 * @return
+	 */
 	protected Object getResult(Model model, FormatEnum toFormat, Locale currentLocale) {
 		Builder<?> builder = getBuilder(toFormat);
 		return builder.process(model);
 	}
 
+	/**
+	 * For configured converting by source object
+	 * 
+	 * @param sourceObj
+	 * @param mappingURI
+	 * @param argsMap
+	 * @param currentLocale
+	 * @return
+	 */
 	protected <T> Object getResult(T sourceObj, String mappingURI, Map<String, Object> argsMap, Locale currentLocale) {
 
 		messages = ResourceBundle.getBundle("com.github.jmodel.mapper.api.MessagesBundle", currentLocale);
@@ -89,8 +115,8 @@ public abstract class AbstractConvertEngine {
 		Model targetTemplateModel = mapping.getTargetTemplateModel();
 
 		if (!mapping.isTemplateReady()) {
-			populateModel(sourceTemplateModel, mapping.getRawSourceFieldPaths());
-			populateModel(targetTemplateModel, mapping.getRawTargetFieldPaths());
+			populateModel(sourceTemplateModel, mapping.getRawSourceFieldPaths(), mapping.getSourceModelRecursiveMap());
+			populateModel(targetTemplateModel, mapping.getRawTargetFieldPaths(), mapping.getTargetModelRecursiveMap());
 			mapping.setTemplateReady(true);
 		}
 
@@ -104,24 +130,31 @@ public abstract class AbstractConvertEngine {
 
 	}
 
-	private void fillTargetInstance(Model targetInstanceModel, Map<String, Field> filePathMap,
-			Map<String, Model> modelPathMap) {
+	/**
+	 * Set value to fields of target model
+	 * 
+	 * @param targetInstanceModel
+	 * @param targetFieldPathMap
+	 * @param targetModelPathMap
+	 */
+	private void fillTargetInstance(Model targetInstanceModel, Map<String, Field> targetFieldPathMap,
+			Map<String, Model> targetModelPathMap) {
 		if (targetInstanceModel != null) {
-			targetInstanceModel.setFieldPathMap(filePathMap);
-			targetInstanceModel.setModelPathMap(modelPathMap);
+			targetInstanceModel.setFieldPathMap(targetFieldPathMap);
+			targetInstanceModel.setModelPathMap(targetModelPathMap);
 
 			if (targetInstanceModel.getModelPath() == null) {
 				targetInstanceModel.setModelPath(targetInstanceModel.getName());
 			}
 
-			modelPathMap.put(targetInstanceModel.getModelPath(), targetInstanceModel);
+			targetModelPathMap.put(targetInstanceModel.getModelPath(), targetInstanceModel);
 
 			if (targetInstanceModel instanceof Entity) {
 				List<Field> fieldList = ((Entity) targetInstanceModel).getFields();
 				if (fieldList != null) {
 					for (Field field : fieldList) {
 						field.setParentEntity((Entity) targetInstanceModel);
-						filePathMap.put(targetInstanceModel.getModelPath() + "." + field.getName(), field);
+						targetFieldPathMap.put(targetInstanceModel.getModelPath() + "." + field.getName(), field);
 					}
 				}
 			}
@@ -131,20 +164,20 @@ public abstract class AbstractConvertEngine {
 				for (Model subModel : subModelList) {
 					if (subModel instanceof Entity) {
 						subModel.setModelPath(subModel.getParentModel().getModelPath() + "." + subModel.getName());
-						fillTargetInstance(subModel, filePathMap, modelPathMap);
+						fillTargetInstance(subModel, targetFieldPathMap, targetModelPathMap);
 					}
 
 					if (subModel instanceof Array) {
 						subModel.setModelPath(targetInstanceModel.getModelPath() + "." + subModel.getName() + "[]");
-						subModel.setModelPathMap(modelPathMap);
-						subModel.setFieldPathMap(filePathMap);
-						modelPathMap.put(subModel.getModelPath(), subModel);
+						subModel.setModelPathMap(targetModelPathMap);
+						subModel.setFieldPathMap(targetFieldPathMap);
+						targetModelPathMap.put(subModel.getModelPath(), subModel);
 						List<Model> subSubModelList = subModel.getSubModels();
 						for (int i = 0; i < subSubModelList.size(); i++) {
 							Model entityInArray = subSubModelList.get(i);
 							entityInArray.setModelPath(
 									targetInstanceModel.getModelPath() + "." + subModel.getName() + "[" + i + "]");
-							fillTargetInstance(entityInArray, filePathMap, modelPathMap);
+							fillTargetInstance(entityInArray, targetFieldPathMap, targetModelPathMap);
 						}
 					}
 				}
@@ -152,9 +185,14 @@ public abstract class AbstractConvertEngine {
 		}
 	}
 
-	private void cleanUnusedField(Model model) {
-		if (model instanceof Entity) {
-			Entity currentEntity = (Entity) model;
+	/**
+	 * Clean unused fields
+	 * 
+	 * @param targetModel
+	 */
+	private void cleanUnusedField(Model targetModel) {
+		if (targetModel instanceof Entity) {
+			Entity currentEntity = (Entity) targetModel;
 			List<Field> newFieldList = new ArrayList<Field>();
 			List<Field> fieldList = currentEntity.getFields();
 			if (fieldList != null) {
@@ -167,7 +205,7 @@ public abstract class AbstractConvertEngine {
 			currentEntity.setFields(newFieldList);
 		}
 
-		List<Model> subModelList = model.getSubModels();
+		List<Model> subModelList = targetModel.getSubModels();
 		if (subModelList != null) {
 			for (Model subModel : subModelList) {
 				cleanUnusedField(subModel);
@@ -175,7 +213,14 @@ public abstract class AbstractConvertEngine {
 		}
 	}
 
-	private void populateModel(final Model root, final List<String> fieldPaths) {
+	/**
+	 * Populate template model (source and target) by configured field paths
+	 * 
+	 * @param root
+	 * @param fieldPaths
+	 */
+	private void populateModel(final Model root, final List<String> fieldPaths,
+			final Map<String, Boolean> modelRecursiveMap) {
 		final Map<String, Object> modelOrFieldMap = new HashMap<String, Object>();
 
 		for (String fieldPath : fieldPaths) {
@@ -192,7 +237,6 @@ public abstract class AbstractConvertEngine {
 				} else {
 					currentPath = parentPath.replace("[]", "[0]") + "." + paths[i];
 				}
-
 				Model currentModel = (Model) modelOrFieldMap.get(currentPath);
 				if (currentModel == null) {
 					// create model object
@@ -210,6 +254,11 @@ public abstract class AbstractConvertEngine {
 					if (currentModel.getName() == null) {
 						currentModel.setName(paths[i]);
 					}
+					Boolean recursive = modelRecursiveMap.get(currentPath);
+					if (recursive != null && recursive) {
+						currentModel.setRecursive(true);
+					}
+
 					currentModel.setModelPath(currentPath);
 					modelOrFieldMap.put(currentPath, currentModel);
 
