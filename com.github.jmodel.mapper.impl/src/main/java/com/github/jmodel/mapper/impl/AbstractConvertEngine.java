@@ -254,7 +254,7 @@ public abstract class AbstractConvertEngine {
 					if (currentModel.getName() == null) {
 						currentModel.setName(paths[i]);
 					}
-					Boolean recursive = modelRecursiveMap.get(currentPath);
+					Boolean recursive = modelRecursiveMap.get(currentPath.replaceAll("\\[0\\]", "\\[\\]"));
 					if (recursive != null && recursive) {
 						currentModel.setRecursive(true);
 					}
