@@ -8,7 +8,7 @@
 		<relativePath>../com.github.jmodel.mapper.parent/pom.xml</relativePath>
 		<groupId>com.github.jmodel</groupId>
 		<artifactId>com.github.jmodel.mapper.parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.1</version>
 	</parent>
 
 	<artifactId>com.github.jmodel.mapper.plugin</artifactId>
@@ -88,12 +88,12 @@
 						<artifactId>common</artifactId>
 						<version>3.6.200-v20130402-1505</version>
 					</dependency>
+					
 					<dependency>
 						<groupId>com.fasterxml.jackson.core</groupId>
 						<artifactId>jackson-core</artifactId>
 						<version>2.6.1</version>
 					</dependency>
-
 					<dependency>
 						<groupId>com.fasterxml.jackson.core</groupId>
 						<artifactId>jackson-databind</artifactId>
@@ -102,7 +102,7 @@
 					<dependency>
 						<groupId>com.github.jmodel</groupId>
 						<artifactId>com.github.jmodel.mapper.api</artifactId>
-						<version>0.0.1-SNAPSHOT</version>
+						<version>0.0.1</version>
 					</dependency>
 				</dependencies>
 			</plugin>

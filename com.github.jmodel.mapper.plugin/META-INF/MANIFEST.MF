@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: com.github.jmodel.mapper.plugin
 Bundle-Vendor: jmodel-mapper
-Bundle-Version: 0.0.1.qualifier
+Bundle-Version: 0.0.1
 Bundle-SymbolicName: com.github.jmodel.mapper.plugin;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
@@ -24,7 +24,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.core.resources;bundle-version="3.11.0",
  org.eclipse.core.runtime;bundle-version="3.12.0",
  org.eclipse.jdt.core;bundle-version="3.12.0",
- com.github.jmodel.api;bundle-version="0.0.1"
+ com.github.jmodel.api;bundle-version="0.0.1",
+ org.apache.xerces;bundle-version="2.9.0"
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

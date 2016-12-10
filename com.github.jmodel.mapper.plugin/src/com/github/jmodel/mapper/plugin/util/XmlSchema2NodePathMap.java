@@ -5,25 +5,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.jmodel.api.IllegalException;
-import com.sun.org.apache.xerces.internal.impl.Constants;
-import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaLoader;
-import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
-import com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager;
-import com.sun.org.apache.xerces.internal.xni.XNIException;
-import com.sun.org.apache.xerces.internal.xni.grammars.Grammar;
-import com.sun.org.apache.xerces.internal.xni.grammars.XSGrammar;
-import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
-import com.sun.org.apache.xerces.internal.xs.XSComplexTypeDefinition;
-import com.sun.org.apache.xerces.internal.xs.XSConstants;
-import com.sun.org.apache.xerces.internal.xs.XSElementDeclaration;
-import com.sun.org.apache.xerces.internal.xs.XSModel;
-import com.sun.org.apache.xerces.internal.xs.XSModelGroup;
-import com.sun.org.apache.xerces.internal.xs.XSNamedMap;
-import com.sun.org.apache.xerces.internal.xs.XSObject;
-import com.sun.org.apache.xerces.internal.xs.XSObjectList;
-import com.sun.org.apache.xerces.internal.xs.XSParticle;
-import com.sun.org.apache.xerces.internal.xs.XSTerm;
-import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
+import org.apache.xerces.impl.Constants;
+import org.apache.xerces.impl.xs.XMLSchemaLoader;
+//import org.apache.xerces.utils.XMLSecurityManager;
+//import org.apache.xerces.utils.XMLSecurityPropertyManager;
+import org.apache.xerces.xni.XNIException;
+import org.apache.xerces.xni.grammars.Grammar;
+import org.apache.xerces.xni.grammars.XSGrammar;
+import org.apache.xerces.xni.parser.XMLInputSource;
+import org.apache.xerces.xs.XSComplexTypeDefinition;
+import org.apache.xerces.xs.XSConstants;
+import org.apache.xerces.xs.XSElementDeclaration;
+import org.apache.xerces.xs.XSModel;
+import org.apache.xerces.xs.XSModelGroup;
+import org.apache.xerces.xs.XSNamedMap;
+import org.apache.xerces.xs.XSObject;
+import org.apache.xerces.xs.XSObjectList;
+import org.apache.xerces.xs.XSParticle;
+import org.apache.xerces.xs.XSTerm;
+import org.apache.xerces.xs.XSTypeDefinition;
 
 /**
  * A subset of XML schema is supported.
@@ -45,8 +45,8 @@ public class XmlSchema2NodePathMap {
 		Map<String, TreeNode<String>> nodePathMap = new HashMap<String, TreeNode<String>>();
 		Map<XSObject, TreeNode<String>> xsObjMap = new HashMap<XSObject, TreeNode<String>>();
 		XMLSchemaLoader xmlSchemaLoader = new XMLSchemaLoader();
-		xmlSchemaLoader.setParameter(Constants.XML_SECURITY_PROPERTY_MANAGER, new XMLSecurityPropertyManager());
-		xmlSchemaLoader.setParameter(Constants.SECURITY_MANAGER, new XMLSecurityManager());
+//		xmlSchemaLoader.setParameter(Constants.XML_SECURITY_PROPERTY_MANAGER, new XMLSecurityPropertyManager());
+//		xmlSchemaLoader.setParameter(Constants.SECURITY_MANAGER, new XMLSecurityManager());
 		xmlSchemaLoader.setParameter(Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_FULL_CHECKING, false);
 		XMLInputSource input = new XMLInputSource(null, file, null);
 		input.setSystemId(file);
